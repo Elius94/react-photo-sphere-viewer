@@ -5,13 +5,14 @@ import resolve from "@rollup/plugin-node-resolve"
 import url from "@rollup/plugin-url"
 import svgr from "@svgr/rollup"
 import babel, { getBabelOutputPlugin } from "@rollup/plugin-babel"
+import peerDepsExternal from 'rollup-plugin-peer-deps-external'
+import autoprefixer from 'autoprefixer'
 
 import pkg from "./package.json"
 
 export default {
     input: "src/index.tsx",
-    output: [
-        {
+    output: [{
             file: pkg.main,
             format: "cjs",
             exports: "auto",
@@ -25,15 +26,32 @@ export default {
         },
     ],
     plugins: [
+        peerDepsExternal(),
+        commonjs({
+            include: 'node_modules/**',
+            // This was required to fix some random errors while building
+            namedExports: {
+                'react-is': ['isForwardRef', 'isValidElementType'],
+            },
+        }),
+        resolve(),
+        babel({ presets: ["@babel/preset-react"], babelHelpers: "bundled" }),
         postcss({
-            modules: false
+            preprocessor: (content, id) => new Promise((res) => {
+                const result = sass.renderSync({ file: id })
+
+                res({ code: result.css.toString() })
+            }),
+            plugins: [autoprefixer],
+            modules: {
+                scopeBehaviour: 'global',
+            },
+            sourceMap: true,
+            extract: true,
         }),
         url(),
         svgr(),
-        resolve(), 
         typescript(),
-        commonjs(),
-        babel({ presets: ["@babel/preset-react"], babelHelpers: "bundled" }),
         getBabelOutputPlugin({
             presets: ["@babel/preset-env"]
         })
