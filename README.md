@@ -1,5 +1,6 @@
 # react-photo-sphere-viewer
 > Photosphere Viewer for React.JS
+[Example](https://pilloledizoldo.it/intro.gif)
 
 ```bash
 npm install react-photo-sphere-viewer
@@ -14,6 +15,47 @@ It is based on [PhotoSphereViewer](https://github.com/mistic100/Photo-Sphere-Vie
 This component is a well managed wrapper around the original JS library. It is easy to use and has a lot of features. It is also easy to customize. It is also easy to extend.
 Addictional features are:
  - Little Planet Mode: display the panorama like a little planet (Similar to the DJI drones exported panoramas)
+
+## Usage
+
+```jsx
+import './App.css';
+import ReactPhotoSphereViewer from 'react-photo-sphere-viewer';
+import React from 'react';
+
+function App() {
+  const photoSphereRef = React.useRef();
+
+  const handleClick = () => {
+    photoSphereRef.current.animate({
+      latitude: 0,
+      longitude: 0,
+      zoom: 55,
+      speed: '10rpm',
+    });
+  }
+
+  return (
+    <div className="App">
+      <ReactPhotoSphereViewer ref={photoSphereRef} src="Test_Pano.jpg" height={'100vh'} width={"100%"} onClick={handleClick}></ReactPhotoSphereViewer>
+    </div>
+  );
+}
+
+export default App;
+```
+
+## Little planet mode
+
+I've added this custom effect that allows you to display the panorama like a little planet. To enable it, you need to pass the `littlePlanet` prop to the component.
+
+```jsx
+<ReactPhotoSphereViewer ref={photoSphereRef} src="Test_Pano.jpg" littlePlanet={true} height={'100vh'} width={"100%"} onClick={handleClick}></ReactPhotoSphereViewer>
+```
+
+The effect is this:
+
+[](https://user-images.githubusercontent.com/14907987/180257570-4070d0b4-b3d8-493d-8f23-efde84074573.mp4)
 
 ## Features
 ### options
@@ -131,46 +173,6 @@ Currently managed methods are:
 
 > To see the original methods, click [here](http://photo-sphere-viewer.js.org/guide/methods.html).
 
-## Usage
-
-```jsx
-import './App.css';
-import ReactPhotoSphereViewer from 'react-photo-sphere-viewer';
-import React from 'react';
-
-function App() {
-  const photoSphereRef = React.useRef();
-
-  const handleClick = () => {
-    photoSphereRef.current.animate({
-      latitude: 0,
-      longitude: 0,
-      zoom: 55,
-      speed: '10rpm',
-    });
-  }
-
-  return (
-    <div className="App">
-      <ReactPhotoSphereViewer ref={photoSphereRef} src="Test_Pano.jpg" height={'100vh'} width={"100%"} onClick={handleClick}></ReactPhotoSphereViewer>
-    </div>
-  );
-}
-
-export default App;
-```
-
-## Little planet mode
-
-I've added this custom effect that allows you to display the panorama like a little planet. To enable it, you need to pass the `littlePlanet` prop to the component.
-
-```jsx
-<ReactPhotoSphereViewer ref={photoSphereRef} src="Test_Pano.jpg" littlePlanet={true} height={'100vh'} width={"100%"} onClick={handleClick}></ReactPhotoSphereViewer>
-```
-
-The effect is this:
-
-[](https://user-images.githubusercontent.com/14907987/180257570-4070d0b4-b3d8-493d-8f23-efde84074573.mp4)
 
 ## License
 
