@@ -1,6 +1,8 @@
 # react-photo-sphere-viewer
 > Photosphere Viewer for React.JS
-[Example](https://pilloledizoldo.it/intro.gif)
+
+![image](https://user-images.githubusercontent.com/14907987/180764341-a23c8eec-95c4-4294-bd1c-dc686e53df9a.png)
+
 
 ```bash
 npm install react-photo-sphere-viewer
