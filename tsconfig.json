@@ -1,18 +1,14 @@
 {
   "compilerOptions": {
-    "outDir": "build",
-    "module": "es2020",
-    "target": "ES2020",
-    "emitDeclarationOnly": true,
+    "module": "esnext",
+    "target": "es5",
     "lib": [
       "es6",
       "dom",
-      "es2020",
     ],
     "sourceMap": true,
     "allowJs": false,
     "jsx": "react",
-    "declaration": true,
     "moduleResolution": "Node",
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
@@ -24,6 +20,8 @@
     "noUnusedParameters": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
+    "baseUrl": "src/",
+    "rootDir": "src",
   },
   "include": [
     "src"
