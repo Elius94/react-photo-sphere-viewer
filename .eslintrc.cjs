@@ -32,6 +32,12 @@ module.exports = {
         "semi": [
             "error",
             "never"
+        ],
+        "@typescript-eslint/ban-ts-comment": [
+            "error",
+            {
+                "ts-ignore": "allow-with-description"
+            }
         ]
     },
 }

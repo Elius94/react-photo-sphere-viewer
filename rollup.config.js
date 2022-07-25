@@ -11,17 +11,17 @@ import pkg from "./package.json"
 export default {
     input: "src/index.tsx",
     output: [{
-            file: pkg.main,
-            format: "cjs",
-            exports: "auto",
-            sourcemap: true
-        },
-        {
-            file: pkg.module,
-            format: "esm",
-            exports: "auto",
-            sourcemap: true
-        },
+        file: pkg.main,
+        format: "cjs",
+        exports: "auto",
+        sourcemap: true
+    },
+    {
+        file: pkg.module,
+        format: "esm",
+        exports: "auto",
+        sourcemap: true
+    },
     ],
     plugins: [
         postcss({
@@ -32,7 +32,7 @@ export default {
         resolve(),
         typescript(),
         commonjs(),
-        babel({ presets: ["@babel/preset-react"], babelHelpers: "bundled" }),
+        babel({ exclude: "node_modules/**", presets: ["@babel/preset-react"], babelHelpers: "bundled" }),
         getBabelOutputPlugin({
             presets: ["@babel/preset-env"]
         })

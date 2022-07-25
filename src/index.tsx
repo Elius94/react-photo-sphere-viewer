@@ -21,6 +21,7 @@ export interface Props extends ViewerOptions {
   width?: number;
   containerClass?: string;
   littlePlanet?: boolean;
+  fishEye?: boolean | number;
   // Events
   onPositionChange?(lat: number, lng: number): any;
   onZoomChange?(zoom: number): any;
@@ -75,7 +76,7 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.Reac
                 downloadUrl: options.downloadUrl || "",
                 loadingImg: options.loadingImg || "",
                 loadingTxt: options.loadingTxt || "",
-                fisheye: options.littlePlanet ? LITTLEPLANET_FISHEYE : options.fisheye || false,
+                fisheye: options.littlePlanet ? LITTLEPLANET_FISHEYE : options.fisheye || false, // @ts-ignore ts(2345)
                 minFov: options.minFov || 30,
                 maxFov: options.littlePlanet ? LITTLEPLANET_MAX_ZOOM : options.maxFov || 90,
                 defaultZoomLvl: options.littlePlanet ? LITTLEPLANET_DEF_ZOOM : options.defaultZoomLvl || 50,
@@ -158,7 +159,7 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.Reac
                         littlePlanetEnabled = true
                         _c.stopAutorotate()
                         _c.setOption("maxFov", LITTLEPLANET_MAX_ZOOM)
-                        _c.setOption("fisheye", LITTLEPLANET_FISHEYE)
+                        //_c.setOption("fisheye", LITTLEPLANET_FISHEYE) // @ts-ignore ts(2345)
                         _c.setOption("mousewheel", false)
                         _c.animate({
                             longitude: 0,
