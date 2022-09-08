@@ -1,10 +1,10 @@
 import './App.css';
-import ReactPhotoSphereViewer from 'react-photo-sphere-viewer';
+import { ReactPhotoSphereViewer } from 'react-photo-sphere-viewer';
 import React from 'react';
 
 function App() {
   const photoSphereRef = React.useRef();
-
+  
   const handleClick = () => {
     photoSphereRef.current.animate({
       latitude: 0,
