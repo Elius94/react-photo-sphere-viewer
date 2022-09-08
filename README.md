@@ -18,11 +18,14 @@ This component is a well managed wrapper around the original JS library. It is e
 Addictional features are:
  - Little Planet Mode: display the panorama like a little planet (Similar to the DJI drones exported panoramas)
 
+ ## Demo
+ [Enjoy it inthis sandbox](https://codesandbox.io/s/sandbox-react-photo-sphere-viewer-by-elius94-j064sm?file=/src/App.js)
+
 ## Usage
 
 ```jsx
 import './App.css';
-import ReactPhotoSphereViewer from 'react-photo-sphere-viewer';
+import { ReactPhotoSphereViewer } from 'react-photo-sphere-viewer';
 import React from 'react';
 
 function App() {
