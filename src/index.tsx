@@ -3,6 +3,31 @@ import { Viewer, ViewerOptions, PanoData, ClickData, Position, AnimateOptions } 
 import "./styles.css"
 import "photo-sphere-viewer/dist/photo-sphere-viewer.css"
 import EventEmitter from "eventemitter3"
+import { CompassPlugin, CompassPluginOptions } from "photo-sphere-viewer/dist/plugins/compass"
+import "photo-sphere-viewer/dist/plugins/compass.css"
+import { GyroscopePlugin, GyroscopePluginOptions } from "photo-sphere-viewer/dist/plugins/gyroscope"
+import { MarkersPlugin, MarkersPluginOptions } from "photo-sphere-viewer/dist/plugins/markers"
+import "photo-sphere-viewer/dist/plugins/markers.css"
+import { AutorotateKeypointsPlugin, AutorotateKeypointsPluginOptions } from "photo-sphere-viewer/dist/plugins/autorotate-keypoints"
+import { GalleryPlugin, GalleryPluginOptions } from "photo-sphere-viewer/dist/plugins/gallery"
+import "photo-sphere-viewer/dist/plugins/gallery.css"
+import { ResolutionPlugin, ResolutionPluginOptions } from "photo-sphere-viewer/dist/plugins/resolution"
+import { SettingsPlugin, SettingsPluginOptions } from "photo-sphere-viewer/dist/plugins/settings"
+import "photo-sphere-viewer/dist/plugins/settings.css"
+import { StereoPlugin } from "photo-sphere-viewer/dist/plugins/stereo"
+import { VideoPlugin, VideoPluginOptions } from "photo-sphere-viewer/dist/plugins/video"
+import "photo-sphere-viewer/dist/plugins/video.css"
+import { VirtualTourPlugin, VirtualTourPluginOptions } from "photo-sphere-viewer/dist/plugins/virtual-tour"
+import "photo-sphere-viewer/dist/plugins/virtual-tour.css"
+import { VisibleRangePlugin, VisibleRangePluginOptions } from "photo-sphere-viewer/dist/plugins/visible-range"
+import { AbstractPlugin } from "photo-sphere-viewer/dist/photo-sphere-viewer"
+// Adapters
+import { EquirectangularTilesAdapter, EquirectangularTilesAdapterOptions, EquirectangularTilesPanorama } from "photo-sphere-viewer/dist/adapters/equirectangular-tiles"
+import { EquirectangularVideoAdapter, EquirectangularVideoAdapterOptions, EquirectangularVideoPanorama } from "photo-sphere-viewer/dist/adapters/equirectangular-video"
+import { CubemapAdapter, CubemapAdapterOptions } from "photo-sphere-viewer/dist/adapters/cubemap"
+import { CubemapTilesAdapter, CubemapTilesAdapterOptions, CubemapTilesPanorama } from "photo-sphere-viewer/dist/adapters/cubemap-tiles"
+
+
 
 const eventEmitter = new EventEmitter()
 const Emitter = {
@@ -15,19 +40,19 @@ const Emitter = {
 Object.freeze(Emitter)
 
 export interface Props extends ViewerOptions {
-  src: string;
-  navbar?: string[];
-  height: number;
-  width?: number;
-  containerClass?: string;
-  littlePlanet?: boolean;
-  fishEye?: boolean | number;
-  // Events
-  onPositionChange?(lat: number, lng: number): any;
-  onZoomChange?(zoom: number): any;
-  onClick?(data: ClickData): void;
-  onDblclick?(data: ClickData): void;
-  onReady?(): void;
+    src: string;
+    navbar?: string[];
+    height: number;
+    width?: number;
+    containerClass?: string;
+    littlePlanet?: boolean;
+    fishEye?: boolean | number;
+    // Events
+    onPositionChange?(lat: number, lng: number): any;
+    onZoomChange?(zoom: number): any;
+    onClick?(data: ClickData): void;
+    onDblclick?(data: ClickData): void;
+    onReady?(): void;
 }
 
 const defaultNavbar = [
@@ -182,7 +207,7 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.Reac
                 _c.destroy()
             }).on("rotate", (options: { x: number, y: number }) => {
                 _c.rotate(options)
-            }).on("setOption", (pair: {option: keyof ViewerOptions, value: any}) => {
+            }).on("setOption", (pair: { option: keyof ViewerOptions, value: any }) => {
                 const { option, value } = pair
                 _c.setOption(option, value)
             }).on("zoom", (zoom: number) => {
@@ -237,4 +262,41 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.Reac
     )
 })
 
-export default ReactPhotoSphereViewer
+export {
+    ReactPhotoSphereViewer,
+    // Plugins
+    CompassPlugin,
+    CompassPluginOptions,
+    GyroscopePlugin,
+    GyroscopePluginOptions,
+    MarkersPlugin,
+    MarkersPluginOptions,
+    AutorotateKeypointsPlugin,
+    AutorotateKeypointsPluginOptions,
+    GalleryPlugin,
+    GalleryPluginOptions,
+    ResolutionPlugin,
+    ResolutionPluginOptions,
+    SettingsPlugin,
+    SettingsPluginOptions,
+    StereoPlugin,
+    VideoPlugin,
+    VideoPluginOptions,
+    VirtualTourPlugin,
+    VirtualTourPluginOptions,
+    VisibleRangePlugin,
+    VisibleRangePluginOptions,
+    AbstractPlugin,
+    // Adapters
+    CubemapAdapter,
+    CubemapAdapterOptions,
+    EquirectangularVideoAdapter,
+    EquirectangularVideoAdapterOptions,
+    EquirectangularVideoPanorama,
+    EquirectangularTilesAdapter,
+    EquirectangularTilesAdapterOptions,
+    EquirectangularTilesPanorama,
+    CubemapTilesAdapter,
+    CubemapTilesAdapterOptions,
+    CubemapTilesPanorama
+}
