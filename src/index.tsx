@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useImperativeHandle, forwardRef, createRef } from "react"
-import { Viewer, ViewerOptions, PanoData, ClickData, Position, AnimateOptions } from "photo-sphere-viewer"
+import { Viewer, ViewerOptions, PanoData, ClickData, Position, AnimateOptions, CssSize } from "photo-sphere-viewer"
 import "./styles.css"
 import "photo-sphere-viewer/dist/photo-sphere-viewer.css"
 import EventEmitter from "eventemitter3"
@@ -240,6 +240,9 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.Reac
         setOption(option: keyof ViewerOptions, value: any): void {
             Emitter.emit("setOption", { option, value })
         },
+        setOptions(options: ViewerOptions): void {
+            return spherePlayerInstance?.setOptions(options)
+        },
         zoom(value: number) {
             Emitter.emit("zoom", value)
         },
@@ -249,11 +252,65 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.Reac
         zoomOut() {
             Emitter.emit("zoomOut", {})
         },
+        resize(size: CssSize) {
+            return spherePlayerInstance?.resize(size)
+        },
+        enterFullscreen() {
+            return spherePlayerInstance?.enterFullscreen()
+        },
+        exitFullscreen() {
+            return spherePlayerInstance?.exitFullscreen()
+        },
+        toggleFullscreen() {
+            return spherePlayerInstance?.toggleFullscreen()
+        },
+        isFullscreenEnabled() {
+            return spherePlayerInstance?.isFullscreenEnabled()
+        },
         startAutoRotate() {
             Emitter.emit("startAutoRotate", {})
         },
         stopAutoRotate() {
             Emitter.emit("stopAutoRotate", {})
+        },
+        getPlugin(pluginName: string) {
+            return spherePlayerInstance?.getPlugin(pluginName)
+        },
+        getPosition() {
+            return spherePlayerInstance?.getPosition()
+        },
+        getZoomLevel() {
+            return spherePlayerInstance?.getZoomLevel()
+        },
+        getSize() {
+            return spherePlayerInstance?.getSize()
+        },
+        needsUpdate() {
+            return spherePlayerInstance?.needsUpdate()
+        },
+        autoSize() {
+            return spherePlayerInstance?.autoSize()
+        },
+        setPanorama(path: string, options?: object) {
+            return spherePlayerInstance?.setPanorama(path, options)
+        },
+        setOverlay(path: string, opacity?: number) {
+            return spherePlayerInstance?.setOverlay(path, opacity)
+        },
+        toggleAutorotate() {
+            return spherePlayerInstance?.toggleAutorotate()
+        },
+        showError(message: string) {
+            return spherePlayerInstance?.showError(message)
+        },
+        hideError() {
+            return spherePlayerInstance?.hideError()
+        },
+        startKeyboardControl() {
+            return spherePlayerInstance?.startKeyboardControl()
+        },
+        stopKeyboardControl() {
+            return spherePlayerInstance?.stopKeyboardControl()
         }
     }), [spherePlayerInstance, sphereElementRef, options, ref])
 
