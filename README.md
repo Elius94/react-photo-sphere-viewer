@@ -1,7 +1,7 @@
 # react-photo-sphere-viewer
 > Photosphere Viewer for React.JS
 
-![Screenshot](https://user-images.githubusercontent.com/14907987/180764341-a23c8eec-95c4-4294-bd1c-dc686e53df9a.png)
+![Screenshot](https://user-images.githubusercontent.com/14907987/194562000-0411b51e-f017-468a-a51c-c6ce6df9b629.png)
 
 
 ```bash

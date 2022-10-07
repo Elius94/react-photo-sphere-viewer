@@ -14,6 +14,10 @@ function App() {
     });
   }
 
+  React.useEffect(() => {
+    console.log(photoSphereRef.current.getCurrentNavbar())
+  }, []);
+
   return (
     <div className="App">
       <ReactPhotoSphereViewer ref={photoSphereRef} src="Test_pano.jpg" littlePlanet={true} height={'100vh'} width={"100%"} onClick={handleClick}></ReactPhotoSphereViewer>

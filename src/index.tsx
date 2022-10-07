@@ -72,6 +72,7 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.Reac
     const [LITTLEPLANET_DEF_LAT] = useState(-90)
     const [LITTLEPLANET_FISHEYE] = useState(2)
     const [LITTLEPLANET_DEF_ZOOM] = useState(0)
+    const [currentNavbar, setCurrentNavbar] = useState<(string | object)[]>(defaultNavbar)
 
     useEffect(() => {
         function handleResize() {
@@ -117,7 +118,6 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.Reac
                 moveInertia: options.moveInertia || true,
                 mousewheel: options.littlePlanet ? false : options.mousewheel || true,
                 mousemove: options.mousemove || true,
-                captureCursor: options.captureCursor || false,
                 mousewheelCtrlKey: options.mousewheelCtrlKey || false,
                 touchmoveTwoFingers: options.touchmoveTwoFingers || false,
                 useXmpData: options.useXmpData || true,
@@ -194,9 +194,12 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.Reac
                         })
                     },
                 }
-                const currentNavbar: any[] = options.navbar || defaultNavbar
-                currentNavbar.push(resetLittlePlanetButton)
-                _c.setOption("navbar", currentNavbar)
+                const _currentNavbar: any[] = options.navbar || defaultNavbar
+                if (!_currentNavbar.find((item) => item.id === "resetLittlePlanetButton")) {
+                    _currentNavbar.push(resetLittlePlanetButton)
+                    _c.setOption("navbar", _currentNavbar)
+                    setCurrentNavbar(_currentNavbar)
+                }
             }
 
             Emitter.on("animate", (options: AnimateOptions) => {
@@ -242,6 +245,9 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.Reac
         },
         setOptions(options: ViewerOptions): void {
             return spherePlayerInstance?.setOptions(options)
+        },
+        getCurrentNavbar(): (string | object)[] {
+            return currentNavbar
         },
         zoom(value: number) {
             Emitter.emit("zoom", value)
