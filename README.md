@@ -19,10 +19,11 @@ Addictional features are:
  - Little Planet Mode: display the panorama like a little planet (Similar to the DJI drones exported panoramas)
 
  ## Demo
- [Enjoy it inthis sandbox](https://codesandbox.io/s/sandbox-react-photo-sphere-viewer-by-elius94-j064sm?file=/src/App.js)
+ [Enjoy it in this sandbox](https://codesandbox.io/s/sandbox-react-photo-sphere-viewer-by-elius94-j064sm?file=/src/App.js)
 
 ## Usage
 
+* Using React
 ```jsx
 import './App.css';
 import { ReactPhotoSphereViewer } from 'react-photo-sphere-viewer';
@@ -49,6 +50,46 @@ function App() {
 
 export default App;
 ```
+
+* Using Next.js
+```jsx
+import './App.css';
+import React, { useEffect, useRef } from 'react';
+import dynamic from 'next/dynamic';
+
+// import { ReactPhotoSphereViewer } from 'react-photo-sphere-viewer';
+const ReactPhotoSphereViewer = dynamic(
+  () =>
+    import('react-photo-sphere-viewer').then(
+      (mod) => mod.ReactPhotoSphereViewer
+    ),
+  {
+    ssr: false,
+  }
+);
+
+function App() {
+  const photoSphereRef = useRef();
+
+  const handleClick = () => {
+    photoSphereRef.current.animate({
+      latitude: 0,
+      longitude: 0,
+      zoom: 55,
+      speed: '10rpm',
+    });
+  }
+
+  return (
+    <div className="App">
+      <ReactPhotoSphereViewer ref={photoSphereRef} src="Test_Pano.jpg" height={'100vh'} width={"100%"} onClick={handleClick}></ReactPhotoSphereViewer>
+    </div>
+  );
+}
+
+export default App;
+```
+
 
 ## Little planet mode
 
