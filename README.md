@@ -68,7 +68,7 @@ const ReactPhotoSphereViewer = dynamic(
   }
 );
 
-function App() {
+export default function Home() {
   const photoSphereRef = useRef();
 
   const handleClick = () => {
@@ -79,17 +79,14 @@ function App() {
       speed: '10rpm',
     });
   }
-
+  
   return (
     <div className="App">
       <ReactPhotoSphereViewer ref={photoSphereRef} src="Test_Pano.jpg" height={'100vh'} width={"100%"} onClick={handleClick}></ReactPhotoSphereViewer>
     </div>
   );
 }
-
-export default App;
 ```
-
 
 ## Little planet mode
 
