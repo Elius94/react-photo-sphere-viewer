@@ -25,7 +25,7 @@
     "dependencies": {
         "autoprefixer": "^10.4.7",
         "eventemitter3": "^4.0.7",
-        "photo-sphere-viewer": "^4.7.3"
+        "photo-sphere-viewer": "^4.8.0"
     },
     "peerDependencies": {
         "prop-types": "^15.5.4",
