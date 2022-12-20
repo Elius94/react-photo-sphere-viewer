@@ -1,32 +1,38 @@
-import React, { useState, useEffect, useImperativeHandle, forwardRef, createRef } from "react"
-import { Viewer, ViewerOptions, PanoData, ClickData, Position, AnimateOptions, CssSize } from "photo-sphere-viewer"
+import React, { 
+    useState, 
+    useEffect, 
+    useImperativeHandle, 
+    forwardRef, 
+    createRef 
+} from "react"
+import { 
+    Viewer, 
+    ViewerConfig, 
+    PanoData, 
+    AnimateOptions, 
+    CssSize, 
+    ExtendedPosition, 
+    UpdatableViewerConfig, 
+    events, 
+    PluginConstructor, 
+    NavbarCustomButton 
+} from "@photo-sphere-viewer/core"
 import "./styles.css"
-import "photo-sphere-viewer/dist/photo-sphere-viewer.css"
-import EventEmitter from "eventemitter3"
-import { CompassPlugin, CompassPluginOptions } from "photo-sphere-viewer/dist/plugins/compass"
-import "photo-sphere-viewer/dist/plugins/compass.css"
-import { GyroscopePlugin, GyroscopePluginOptions } from "photo-sphere-viewer/dist/plugins/gyroscope"
-import { MarkersPlugin, MarkersPluginOptions } from "photo-sphere-viewer/dist/plugins/markers"
-import "photo-sphere-viewer/dist/plugins/markers.css"
-import { AutorotateKeypointsPlugin, AutorotateKeypointsPluginOptions } from "photo-sphere-viewer/dist/plugins/autorotate-keypoints"
-import { GalleryPlugin, GalleryPluginOptions } from "photo-sphere-viewer/dist/plugins/gallery"
-import "photo-sphere-viewer/dist/plugins/gallery.css"
-import { ResolutionPlugin, ResolutionPluginOptions } from "photo-sphere-viewer/dist/plugins/resolution"
-import { SettingsPlugin, SettingsPluginOptions } from "photo-sphere-viewer/dist/plugins/settings"
-import "photo-sphere-viewer/dist/plugins/settings.css"
-import { StereoPlugin } from "photo-sphere-viewer/dist/plugins/stereo"
-import { VideoPlugin, VideoPluginOptions } from "photo-sphere-viewer/dist/plugins/video"
-import "photo-sphere-viewer/dist/plugins/video.css"
-import { VirtualTourPlugin, VirtualTourPluginOptions } from "photo-sphere-viewer/dist/plugins/virtual-tour"
-import "photo-sphere-viewer/dist/plugins/virtual-tour.css"
-import { VisibleRangePlugin, VisibleRangePluginOptions } from "photo-sphere-viewer/dist/plugins/visible-range"
-import { AbstractPlugin } from "photo-sphere-viewer/dist/photo-sphere-viewer"
-// Adapters
-import { EquirectangularTilesAdapter, EquirectangularTilesAdapterOptions, EquirectangularTilesPanorama } from "photo-sphere-viewer/dist/adapters/equirectangular-tiles"
-import { EquirectangularVideoAdapter, EquirectangularVideoAdapterOptions, EquirectangularVideoPanorama } from "photo-sphere-viewer/dist/adapters/equirectangular-video"
-import { CubemapAdapter, CubemapAdapterOptions } from "photo-sphere-viewer/dist/adapters/cubemap"
-import { CubemapTilesAdapter, CubemapTilesAdapterOptions, CubemapTilesPanorama } from "photo-sphere-viewer/dist/adapters/cubemap-tiles"
+import "@photo-sphere-viewer/core/index.css"
+import { AutorotatePlugin } from "@photo-sphere-viewer/autorotate-plugin"
+import { MarkersPlugin, MarkersPluginConfig } from "@photo-sphere-viewer/markers-plugin"
+import { CompassPlugin, CompassPluginConfig } from "@photo-sphere-viewer/compass-plugin"
+import { GalleryPlugin, GalleryPluginConfig } from "@photo-sphere-viewer/gallery-plugin"
+import { GyroscopePlugin, GyroscopePluginConfig } from "@photo-sphere-viewer/gyroscope-plugin"
+import { ResolutionPlugin, ResolutionPluginConfig } from "@photo-sphere-viewer/resolution-plugin"
+import { SettingsPlugin, SettingsPluginConfig } from "@photo-sphere-viewer/settings-plugin"
+import { StereoPlugin } from "@photo-sphere-viewer/stereo-plugin"
+import { VideoPlugin, VideoPluginConfig } from "@photo-sphere-viewer/video-plugin"
+import { VirtualTourPlugin, VirtualTourPluginConfig } from "@photo-sphere-viewer/virtual-tour-plugin"
+import { VisibleRangePlugin, VisibleRangePluginConfig } from "@photo-sphere-viewer/visible-range-plugin"
 
+import "@photo-sphere-viewer/markers-plugin/index.css"
+import EventEmitter from "eventemitter3"
 
 
 const eventEmitter = new EventEmitter()
@@ -39,19 +45,48 @@ const Emitter = {
 
 Object.freeze(Emitter)
 
-export interface Props extends ViewerOptions {
+const omittedProps = [
+    "src",
+    "height",
+    "width",
+    "containerClass",
+    "littlePlanet",
+    "onPositionChange",
+    "onZoomChange",
+    "onClick",
+    "onDblclick",
+    "onReady",
+]
+
+export interface Props extends ViewerConfig {
     src: string;
     navbar?: string[];
-    height: number;
-    width?: number;
+    height: string;
+    width?: string;
     containerClass?: string;
     littlePlanet?: boolean;
     fishEye?: boolean | number;
+    lang?: {
+        zoom: string;
+        zoomOut: string;
+        zoomIn: string;
+        moveUp: string;
+        moveDown: string;
+        moveLeft: string;
+        moveRight: string;
+        download: string;
+        fullscreen: string;
+        menu: string;
+        twoFingers: string;
+        ctrlZoom: string;
+        loadError: string;
+        [K: string]: string;
+    };
     // Events
-    onPositionChange?(lat: number, lng: number): any;
-    onZoomChange?(zoom: number): any;
-    onClick?(data: ClickData): void;
-    onDblclick?(data: ClickData): void;
+    onPositionChange?(lat: number, lng: number): void;
+    onZoomChange?(data: events.ZoomUpdatedEvent & { type: "zoom-updated"; }): void;
+    onClick?(data: events.ClickEvent & { type: "click"; }): void;
+    onDblclick?(data: events.ClickEvent & { type: "dblclick"; }): void;
     onReady?(): void;
 }
 
@@ -60,6 +95,16 @@ const defaultNavbar = [
     "zoom",
     "fullscreen"
 ]
+
+function adaptOptions(options: Props): ViewerConfig {
+    const adaptedOptions = { ...options }
+    for (const key in adaptedOptions) {
+        if (omittedProps.includes(key)) {
+            delete adaptedOptions[key]
+        }
+    }
+    return adaptedOptions as ViewerConfig
+}
 
 function map(_in: number, inMin: number, inMax: number, outMin: number, outMax: number): number {
     return (_in - inMin) * (outMax - outMin) / (inMax - inMin) + outMin
@@ -91,30 +136,22 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.Reac
         let littlePlanetEnabled = true
         if (sphereElementRef.current && !spherePlayerInstance) {
             const _c = new Viewer({
+                ...adaptOptions(options),
                 container: sphereElementRef.current,
                 panorama: options.src,
                 size: {
                     height: options.height,
-                    width: options.width || 100
+                    width: options.width || "100px"
                 },
-                caption: options.caption || "",
-                description: options.description || "",
-                downloadUrl: options.downloadUrl || "",
-                loadingImg: options.loadingImg || "",
-                loadingTxt: options.loadingTxt || "",
-                fisheye: options.littlePlanet ? LITTLEPLANET_FISHEYE : options.fisheye || false, // @ts-ignore ts(2345)
+                fisheye: options.littlePlanet ? LITTLEPLANET_FISHEYE : options.fisheye || false,
                 minFov: options.minFov || 30,
                 maxFov: options.littlePlanet ? LITTLEPLANET_MAX_ZOOM : options.maxFov || 90,
                 defaultZoomLvl: options.littlePlanet ? LITTLEPLANET_DEF_ZOOM : options.defaultZoomLvl || 50,
-                defaultLong: options.defaultLong || 0,
-                defaultLat: options.littlePlanet ? LITTLEPLANET_DEF_LAT : options.defaultLat || 0,
+                defaultYaw: options.defaultYaw || 0,
+                defaultPitch: options.littlePlanet ? LITTLEPLANET_DEF_LAT : options.defaultPitch || 0,
                 sphereCorrection: options.sphereCorrection || { pan: 0, tilt: 0, roll: 0 },
                 moveSpeed: options.moveSpeed || 1,
                 zoomSpeed: options.zoomSpeed || 1,
-                autorotateDelay: options.autorotateDelay || undefined,
-                autorotateIdle: options.autorotateIdle || false,
-                autorotateSpeed: options.autorotateSpeed || 1,
-                autorotateLat: options.autorotateLat || options.defaultLat || 0,
                 moveInertia: options.moveInertia || true,
                 mousewheel: options.littlePlanet ? false : options.mousewheel || true,
                 mousemove: options.mousemove || true,
@@ -126,14 +163,26 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.Reac
                 canvasBackground: options.canvasBackground || "#000",
                 withCredentials: options.withCredentials || false,
                 navbar: options.navbar || defaultNavbar,
-                lang: options.lang || {},
+                lang: options.lang || {} as keyof Props["lang"],
                 keyboard: options.keyboard || {},
-                plugins: options.plugins || [],
-            }).once("ready", () => {
+                plugins: [
+                    [
+                        AutorotatePlugin as unknown as PluginConstructor, 
+                        { 
+                            autorotatePitch: "5deg", 
+                            autostartDelay: undefined, 
+                            autostartOnIdle: false 
+                        }
+                    ], 
+                    ...(options.plugins ? options.plugins as PluginConstructor[] : [])
+                ],
+            })
+            _c.addEventListener("ready", () => {
                 if (options.onReady) {
                     options.onReady()
                 }
-            }).on("click", (_: any, data: ClickData) => {
+            }, { once: true })
+            _c.addEventListener("click", (data: events.ClickEvent & { type: "click"; }) => {
                 if (options.onClick) {
                     options.onClick(data)
                 }
@@ -141,36 +190,40 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.Reac
                     littlePlanetEnabled = false
                     // fly inside the sphere
                     _c.animate({
-                        longitude: 0,
-                        latitude: LITTLEPLANET_DEF_LAT,
+                        yaw: 0,
+                        pitch: LITTLEPLANET_DEF_LAT,
                         zoom: 75,
                         speed: "3rpm",
                     }).then(() => {
                         // watch on the sky
                         _c.animate({
-                            longitude: 0,
-                            latitude: 0,
+                            yaw: 0,
+                            pitch: 0,
                             zoom: 90,
                             speed: "10rpm",
                         }).then(() => {
                             // Disable Little Planet.
-                            _c.startAutorotate()
+                            const p = _c.getPlugin(AutorotatePlugin as unknown as PluginConstructor) as AutorotatePlugin
+                            if (p) p.start()
                             _c.setOption("maxFov", options.maxFov || 70)
                             _c.setOption("mousewheel", options.mousewheel || true)
                         })
                     })
                 }
-            }).on("dblclick", (_: any, data: ClickData) => {
+            })
+            _c.addEventListener("dblclick", (data: events.ClickEvent & { type: "dblclick"; }) => {
                 if (options.onDblclick) {
                     options.onDblclick(data)
                 }
-            }).on("zoom-updated", (_: any, zoom: number) => {
+            })
+            _c.addEventListener("zoom-updated", (zoom: events.ZoomUpdatedEvent & { type: "zoom-updated" }) => {
                 if (options.onZoomChange) {
                     options.onZoomChange(zoom)
                 }
-            }).on("position-updated", (_: any, position: Position) => {
+            })
+            _c.addEventListener("position-updated", (position: events.PositionUpdatedEvent & { type: "position-updated"; }) => {
                 if (options.onPositionChange) {
-                    options.onPositionChange(position.latitude, position.longitude)
+                    options.onPositionChange(position.position.pitch, position.position.yaw)
                 }
             })
 
@@ -182,20 +235,21 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.Reac
                     className: "resetLittlePlanetButton",
                     onClick: () => {
                         littlePlanetEnabled = true
-                        _c.stopAutorotate()
+                        const p = _c.getPlugin(AutorotatePlugin as unknown as PluginConstructor) as AutorotatePlugin
+                        if (p) p.stop()
                         _c.setOption("maxFov", LITTLEPLANET_MAX_ZOOM)
                         //_c.setOption("fisheye", LITTLEPLANET_FISHEYE) // @ts-ignore ts(2345)
                         _c.setOption("mousewheel", false)
                         _c.animate({
-                            longitude: 0,
-                            latitude: LITTLEPLANET_DEF_LAT,
+                            yaw: 0,
+                            pitch: LITTLEPLANET_DEF_LAT,
                             zoom: LITTLEPLANET_DEF_ZOOM,
                             speed: "10rpm",
                         })
                     },
                 }
-                const _currentNavbar: any[] = options.navbar || defaultNavbar
-                if (!_currentNavbar.find((item) => item.id === "resetLittlePlanetButton")) {
+                const _currentNavbar: Array<string | NavbarCustomButton> = options.navbar || defaultNavbar
+                if (!_currentNavbar.find((item) => typeof item === "object" && item?.id === "resetLittlePlanetButton")) {
                     _currentNavbar.push(resetLittlePlanetButton)
                     _c.setOption("navbar", _currentNavbar)
                     setCurrentNavbar(_currentNavbar)
@@ -208,9 +262,9 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.Reac
                 _c.stopAnimation()
             }).on("destroy", () => {
                 _c.destroy()
-            }).on("rotate", (options: { x: number, y: number }) => {
+            }).on("rotate", (options: ExtendedPosition) => {
                 _c.rotate(options)
-            }).on("setOption", (pair: { option: keyof ViewerOptions, value: any }) => {
+            }).on("setOption", (pair: { option: keyof UpdatableViewerConfig, value: UpdatableViewerConfig[keyof UpdatableViewerConfig] }) => {
                 const { option, value } = pair
                 _c.setOption(option, value)
             }).on("zoom", (zoom: number) => {
@@ -220,9 +274,14 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.Reac
             }).on("zoomOut", () => {
                 _c.zoomOut()
             }).on("startAutoRotate", () => {
-                _c.startAutorotate()
+                const p = _c.getPlugin(AutorotatePlugin as unknown as PluginConstructor) as AutorotatePlugin
+                if (p) p.start()
             }).on("stopAutoRotate", () => {
-                _c.stopAutorotate()
+                const p = _c.getPlugin(AutorotatePlugin as unknown as PluginConstructor) as AutorotatePlugin
+                if (p) p.stop()
+            }).on("toggleAutorotate", () => {
+                const p = _c.getPlugin(AutorotatePlugin as unknown as PluginConstructor) as AutorotatePlugin
+                if (p) p.toggle()
             })
 
             setSpherePlayerInstance(_c)
@@ -240,10 +299,10 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.Reac
         rotate(options: { x: number, y: number }) {
             Emitter.emit("rotate", options)
         },
-        setOption(option: keyof ViewerOptions, value: any): void {
+        setOption(option: keyof ViewerConfig, value: any): void {
             Emitter.emit("setOption", { option, value })
         },
-        setOptions(options: ViewerOptions): void {
+        setOptions(options: ViewerConfig): void {
             return spherePlayerInstance?.setOptions(options)
         },
         getCurrentNavbar(): (string | object)[] {
@@ -304,7 +363,7 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.Reac
             return spherePlayerInstance?.setOverlay(path, opacity)
         },
         toggleAutorotate() {
-            return spherePlayerInstance?.toggleAutorotate()
+            Emitter.emit("toggleAutorotate", {})
         },
         showError(message: string) {
             return spherePlayerInstance?.showError(message)
@@ -327,39 +386,14 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.Reac
 
 export {
     ReactPhotoSphereViewer,
-    // Plugins
-    CompassPlugin,
-    CompassPluginOptions,
-    GyroscopePlugin,
-    GyroscopePluginOptions,
-    MarkersPlugin,
-    MarkersPluginOptions,
-    AutorotateKeypointsPlugin,
-    AutorotateKeypointsPluginOptions,
-    GalleryPlugin,
-    GalleryPluginOptions,
-    ResolutionPlugin,
-    ResolutionPluginOptions,
-    SettingsPlugin,
-    SettingsPluginOptions,
+    MarkersPlugin, MarkersPluginConfig,
+    CompassPlugin, CompassPluginConfig,
+    GalleryPlugin, GalleryPluginConfig,
+    GyroscopePlugin, GyroscopePluginConfig,
+    ResolutionPlugin, ResolutionPluginConfig,
+    SettingsPlugin, SettingsPluginConfig,
     StereoPlugin,
-    VideoPlugin,
-    VideoPluginOptions,
-    VirtualTourPlugin,
-    VirtualTourPluginOptions,
-    VisibleRangePlugin,
-    VisibleRangePluginOptions,
-    AbstractPlugin,
-    // Adapters
-    CubemapAdapter,
-    CubemapAdapterOptions,
-    EquirectangularVideoAdapter,
-    EquirectangularVideoAdapterOptions,
-    EquirectangularVideoPanorama,
-    EquirectangularTilesAdapter,
-    EquirectangularTilesAdapterOptions,
-    EquirectangularTilesPanorama,
-    CubemapTilesAdapter,
-    CubemapTilesAdapterOptions,
-    CubemapTilesPanorama
+    VideoPlugin, VideoPluginConfig,
+    VirtualTourPlugin, VirtualTourPluginConfig,
+    VisibleRangePlugin, VisibleRangePluginConfig
 }

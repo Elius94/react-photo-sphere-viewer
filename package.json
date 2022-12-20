@@ -23,9 +23,20 @@
         "deploy": "gh-pages -d example/build"
     },
     "dependencies": {
+        "@photo-sphere-viewer/autorotate-plugin": "^5.0.0",
+        "@photo-sphere-viewer/compass-plugin": "^5.0.0",
+        "@photo-sphere-viewer/core": "^5.0.0",
+        "@photo-sphere-viewer/gallery-plugin": "^5.0.0",
+        "@photo-sphere-viewer/gyroscope-plugin": "^5.0.0",
+        "@photo-sphere-viewer/markers-plugin": "^5.0.0",
+        "@photo-sphere-viewer/resolution-plugin": "^5.0.0",
+        "@photo-sphere-viewer/settings-plugin": "^5.0.0",
+        "@photo-sphere-viewer/stereo-plugin": "^5.0.0",
+        "@photo-sphere-viewer/video-plugin": "^5.0.0",
+        "@photo-sphere-viewer/virtual-tour-plugin": "^5.0.0",
+        "@photo-sphere-viewer/visible-range-plugin": "^5.0.0",
         "autoprefixer": "^10.4.7",
-        "eventemitter3": "^4.0.7",
-        "photo-sphere-viewer": "^4.8.0"
+        "eventemitter3": "^4.0.7"
     },
     "peerDependencies": {
         "prop-types": "^15.5.4",
