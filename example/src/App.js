@@ -1,16 +1,11 @@
 import './App.css';
-import { ReactPhotoSphereViewer/*, MarkersPlugin*/ } from 'react-photo-sphere-viewer';
-import { MarkersPlugin } from '@photo-sphere-viewer/markers-plugin';
+import { ReactPhotoSphereViewer, MarkersPlugin } from 'react-photo-sphere-viewer';
 import React from 'react';
 
 function App() {
-  const [markersManager, setMarkerManager] = React.useState();
-  const photoSphereRef = React.useCallback((node) => {
-    const markersPlugs = node?.getPlugin(MarkersPlugin);
-    setMarkerManager(markersPlugs);
-  }, []);
+  const photoSphereRef = React.useRef();
 
-  const handleClick = () => {
+  const handleClick = (instance) => {
     photoSphereRef.current.animate({
       yaw: 0,
       pitch: 0,
@@ -19,17 +14,22 @@ function App() {
     });
   }
 
-  React.useEffect(() => {
-    if (markersManager) {
-      console.log(markersManager);
-      markersManager.addEventListener("select-marker", (e, marker, data) => {
-        console.log("asd");
-      });
-      markersManager.addEventListener("over-marker", (e, marker) => {
-        console.log(`Cursor is over marker ${marker.id}`);
-      });
-    }
-  }, [markersManager]);
+  const handleReady = (instance) => {
+    const markersPlugs = instance.getPlugin(MarkersPlugin);
+    if (!markersPlugs)
+      return;
+    console.log(markersPlugs);
+    markersPlugs.addMarker({
+      id: "imageLayer2",
+      imageLayer: "drone.png",
+      size: { width: 220, height: 220 },
+      position: { yaw: '130.5deg', pitch: '-0.1deg' },
+      tooltip: "Image embedded in the scene"
+    });
+    markersPlugs.addEventListener("select-marker", () => {
+      console.log("asd");
+    });
+  }
 
   const plugins = [
     [
@@ -68,6 +68,7 @@ function App() {
         height={'100vh'}
         width={"100%"}
         onClick={handleClick}
+        onReady={handleReady}
         plugins={plugins} />
     </div>
   );

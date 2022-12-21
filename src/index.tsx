@@ -1,21 +1,23 @@
-import React, { 
-    useState, 
-    useEffect, 
-    useImperativeHandle, 
-    forwardRef, 
-    createRef 
+import React, {
+    useState,
+    useEffect,
+    useImperativeHandle,
+    forwardRef,
+    createRef
 } from "react"
-import { 
-    Viewer, 
-    ViewerConfig, 
-    PanoData, 
-    AnimateOptions, 
-    CssSize, 
-    ExtendedPosition, 
-    UpdatableViewerConfig, 
-    events, 
-    PluginConstructor, 
-    NavbarCustomButton 
+import {
+    Viewer,
+    ViewerConfig,
+    PanoData,
+    AnimateOptions,
+    CssSize,
+    ExtendedPosition,
+    UpdatableViewerConfig,
+    events,
+    PluginConstructor,
+    NavbarCustomButton,
+    AbstractAdapter,
+    AbstractPlugin
 } from "@photo-sphere-viewer/core"
 import "./styles.css"
 import "@photo-sphere-viewer/core/index.css"
@@ -30,6 +32,11 @@ import { StereoPlugin } from "@photo-sphere-viewer/stereo-plugin"
 import { VideoPlugin, VideoPluginConfig } from "@photo-sphere-viewer/video-plugin"
 import { VirtualTourPlugin, VirtualTourPluginConfig } from "@photo-sphere-viewer/virtual-tour-plugin"
 import { VisibleRangePlugin, VisibleRangePluginConfig } from "@photo-sphere-viewer/visible-range-plugin"
+import { CubemapAdapter, CubemapAdapterConfig } from "@photo-sphere-viewer/cubemap-adapter"
+/*import { CubemapTilesAdapter, CubemapTilesAdapterConfig } from "@photo-sphere-viewer/cubemap-tiles-adapter"
+import { CubemapVideoAdapter, CubemapVideoAdapterConfig } from "@photo-sphere-viewer/cubemap-video-adapter"
+import { EquirectangularTilesAdapter, EquirectangularTilesAdapterConfig } from "@photo-sphere-viewer/equirectangular-tiles-adapter"
+import { EquirectangularVideoAdapter, EquirectangularVideoAdapterConfig } from "@photo-sphere-viewer/equirectangular-video-adapter"*/
 
 import "@photo-sphere-viewer/markers-plugin/index.css"
 import EventEmitter from "eventemitter3"
@@ -83,11 +90,11 @@ export interface Props extends ViewerConfig {
         [K: string]: string;
     };
     // Events
-    onPositionChange?(lat: number, lng: number): void;
-    onZoomChange?(data: events.ZoomUpdatedEvent & { type: "zoom-updated"; }): void;
-    onClick?(data: events.ClickEvent & { type: "click"; }): void;
-    onDblclick?(data: events.ClickEvent & { type: "dblclick"; }): void;
-    onReady?(): void;
+    onPositionChange?(lat: number, lng: number, instance: Viewer): void;
+    onZoomChange?(data: events.ZoomUpdatedEvent & { type: "zoom-updated"; }, instance: Viewer): void;
+    onClick?(data: events.ClickEvent & { type: "click"; }, instance: Viewer): void;
+    onDblclick?(data: events.ClickEvent & { type: "dblclick"; }, instance: Viewer): void;
+    onReady?(instance: Viewer): void;
 }
 
 const defaultNavbar = [
@@ -167,24 +174,24 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.Reac
                 keyboard: options.keyboard || {},
                 plugins: [
                     [
-                        AutorotatePlugin as unknown as PluginConstructor, 
-                        { 
-                            autorotatePitch: "5deg", 
-                            autostartDelay: undefined, 
-                            autostartOnIdle: false 
+                        AutorotatePlugin as unknown as PluginConstructor,
+                        {
+                            autorotatePitch: "5deg",
+                            autostartDelay: undefined,
+                            autostartOnIdle: false
                         }
-                    ], 
+                    ],
                     ...(options.plugins ? options.plugins as PluginConstructor[] : [])
                 ],
             })
             _c.addEventListener("ready", () => {
                 if (options.onReady) {
-                    options.onReady()
+                    options.onReady(_c)
                 }
             }, { once: true })
             _c.addEventListener("click", (data: events.ClickEvent & { type: "click"; }) => {
                 if (options.onClick) {
-                    options.onClick(data)
+                    options.onClick(data, _c)
                 }
                 if (options.littlePlanet && littlePlanetEnabled) {
                     littlePlanetEnabled = false
@@ -213,17 +220,17 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.Reac
             })
             _c.addEventListener("dblclick", (data: events.ClickEvent & { type: "dblclick"; }) => {
                 if (options.onDblclick) {
-                    options.onDblclick(data)
+                    options.onDblclick(data, _c)
                 }
             })
             _c.addEventListener("zoom-updated", (zoom: events.ZoomUpdatedEvent & { type: "zoom-updated" }) => {
                 if (options.onZoomChange) {
-                    options.onZoomChange(zoom)
+                    options.onZoomChange(zoom, _c)
                 }
             })
             _c.addEventListener("position-updated", (position: events.PositionUpdatedEvent & { type: "position-updated"; }) => {
                 if (options.onPositionChange) {
-                    options.onPositionChange(position.position.pitch, position.position.yaw)
+                    options.onPositionChange(position.position.pitch, position.position.yaw, _c)
                 }
             })
 
@@ -395,5 +402,11 @@ export {
     StereoPlugin,
     VideoPlugin, VideoPluginConfig,
     VirtualTourPlugin, VirtualTourPluginConfig,
-    VisibleRangePlugin, VisibleRangePluginConfig
+    VisibleRangePlugin, VisibleRangePluginConfig,
+    CubemapAdapter, CubemapAdapterConfig,
+    /*CubemapTilesAdapter, CubemapTilesAdapterConfig,
+    CubemapVideoAdapter, CubemapVideoAdapterConfig,
+    EquirectangularTilesAdapter, EquirectangularTilesAdapterConfig,
+    EquirectangularVideoAdapter, EquirectangularVideoAdapterConfig,*/
+    AbstractPlugin, AbstractAdapter
 }

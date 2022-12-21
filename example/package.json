@@ -12,6 +12,7 @@
     "react-dom": "^18.2.0",
     "react-photo-sphere-viewer": "file:..",
     "react-scripts": "5.0.1",
+    "rpsv-markers-plugin": "^0.0.3",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
