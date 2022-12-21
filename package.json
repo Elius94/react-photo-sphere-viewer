@@ -1,9 +1,20 @@
 {
     "name": "react-photo-sphere-viewer",
-    "version": "3.0.0-psv5.0.0",
+    "version": "3.0.1-psv5.0.0",
     "description": "Photosphere Viewer for React.JS, wrapper of photo-sphere-viewer.js",
     "author": "Elius94",
     "license": "MIT",
+    "keywords": [
+        "react",
+        "photosphere",
+        "viewer",
+        "360",
+        "panorama",
+        "photo",
+        "sphere",
+        "photo-sphere-viewer",
+        "react-photo-sphere-viewer"
+    ],
     "repository": "elius94/react-photo-sphere-viewer",
     "main": "dist/index.js",
     "module": "dist/index.js",
