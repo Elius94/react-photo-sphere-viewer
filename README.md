@@ -8,6 +8,12 @@
 npm install react-photo-sphere-viewer
 ```
 
+## Library Version
+Original Wrapped Library: [PhotoSphereViewer](https://github.com/mistic100/Photo-Sphere-Viewer) Version: 5.0.0 [<font color="green">**NEW**</font>]
+Now the component version is composed by the semantic version of the wrapper and the version of the original library. For example, the current version is 2.1.4-psv5.0.0. This means that the wrapper is in version 2.1.4 and the original library [psv](https://github.com/mistic100/Photo-Sphere-Viewer) is in version 5.0.0.
+
+## Description
+
 [![NPM](https://img.shields.io/npm/v/react-photo-sphere-viewer.svg)](https://www.npmjs.com/package/react-photo-sphere-viewer) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 [](https://user-images.githubusercontent.com/14907987/180258193-7d6179dc-64d7-4b08-9381-95e061c9ff79.mp4)
@@ -30,20 +36,9 @@ import { ReactPhotoSphereViewer } from 'react-photo-sphere-viewer';
 import React from 'react';
 
 function App() {
-  const photoSphereRef = React.useRef();
-
-  const handleClick = () => {
-    photoSphereRef.current.animate({
-      latitude: 0,
-      longitude: 0,
-      zoom: 55,
-      speed: '10rpm',
-    });
-  }
-
   return (
     <div className="App">
-      <ReactPhotoSphereViewer ref={photoSphereRef} src="Test_Pano.jpg" height={'100vh'} width={"100%"} onClick={handleClick}></ReactPhotoSphereViewer>
+      <ReactPhotoSphereViewer src="Test_Pano.jpg" height={'100vh'} width={"100%"}></ReactPhotoSphereViewer>
     </div>
   );
 }
@@ -68,21 +63,10 @@ const ReactPhotoSphereViewer = dynamic(
   }
 );
 
-export default function Home() {
-  const photoSphereRef = useRef();
-
-  const handleClick = () => {
-    photoSphereRef.current.animate({
-      latitude: 0,
-      longitude: 0,
-      zoom: 55,
-      speed: '10rpm',
-    });
-  }
-  
+export default function Home() {  
   return (
     <div className="App">
-      <ReactPhotoSphereViewer ref={photoSphereRef} src="Test_Pano.jpg" height={'100vh'} width={"100%"} onClick={handleClick}></ReactPhotoSphereViewer>
+      <ReactPhotoSphereViewer src="Test_Pano.jpg" height={'100vh'} width={"100%"}></ReactPhotoSphereViewer>
     </div>
   );
 }
@@ -93,7 +77,7 @@ export default function Home() {
 I've added this custom effect that allows you to display the panorama like a little planet. To enable it, you need to pass the `littlePlanet` prop to the component.
 
 ```jsx
-<ReactPhotoSphereViewer ref={photoSphereRef} src="Test_Pano.jpg" littlePlanet={true} height={'100vh'} width={"100%"} onClick={handleClick}></ReactPhotoSphereViewer>
+<ReactPhotoSphereViewer src="Test_Pano.jpg" littlePlanet={true} height={'100vh'} width={"100%"}></ReactPhotoSphereViewer>
 ```
 
 The effect is this:
@@ -117,52 +101,105 @@ Currently all options of the original library are supported and exported as prop
 
 ```ts
 /**
- * @summary Viewer options, see {@link http://photo-sphere-viewer.js.org/guide/config.html}
+ * Viewer configuration
+ * @link https://photo-sphere-viewer.js.org/guide/config.html
  */
-type ViewerOptions = {
-  container: HTMLElement | string;
-  panorama?: any;
-  adapter?: AdapterConstructor<any> | [AdapterConstructor<any>, any];
-  caption?: string;
-  description?: string;
-  downloadUrl?: string;
-  loadingImg?: string;
-  loadingTxt?: string;
-  size?: Size;
-  fisheye?: boolean;
-  minFov?: number;
-  maxFov?: number;
-  defaultZoomLvl?: number;
-  defaultLong?: number;
-  defaultLat?: number;
-  sphereCorrection?: { pan?: number, tilt?: number, roll?: number };
-  moveSpeed?: number;
-  zoomSpeed?: number;
-  autorotateDelay?: number,
-  autorotateIdle?: boolean;
-  autorotateSpeed?: string | number;
-  autorotateLat?: number;
-  moveInertia?: boolean;
-  mousewheel?: boolean;
-  mousemove?: boolean;
-  captureCursor?: boolean;
-  mousewheelCtrlKey?: boolean;
-  touchmoveTwoFingers?: boolean;
-  useXmpData?: boolean;
-  panoData?: PanoData | PanoDataProvider;
-  requestHeaders?: Record<string, string> | ((url: string) => Record<string, string>);
-  canvasBackground?: string;
-  withCredentials?: boolean;
-  navbar?: string | Array<string | NavbarCustomButton>;
-  lang?: Record<string, string>;
-  keyboard?: Record<string, string>;
-  plugins?: Array<PluginConstructor<any> | [PluginConstructor<any>, any]>;
+type ViewerConfig = {
+    container: HTMLElement | string;
+    panorama?: any;
+    overlay?: any;
+    /** @default 1 */
+    overlayOpacity?: number;
+    /** @default equirectangular */
+    adapter?: AdapterConstructor | [AdapterConstructor, any];
+    plugins?: Array<PluginConstructor | [PluginConstructor, any]>;
+    /** @default null */
+    caption?: string;
+    /** @default null */
+    description?: string;
+    /** @default null */
+    downloadUrl?: string;
+    /** @default null */
+    loadingImg?: string;
+    /** @default 'Loading...' */
+    loadingTxt?: string;
+    /** @default `container` size */
+    size?: CssSize;
+    /** @default false */
+    fisheye?: boolean | number;
+    /** @default 30 */
+    minFov?: number;
+    /** @default 90 */
+    maxFov?: number;
+    /** @default 50 */
+    defaultZoomLvl?: number;
+    /** @deprecated use `defaultYaw` */
+    defaultLong?: number;
+    /** @deprecated use `defaultPitch` */
+    defaultLat?: number;
+    /** @default 0 */
+    defaultYaw?: number | string;
+    /** @default 0 */
+    defaultPitch?: number | string;
+    /** @default `0,0,0` */
+    sphereCorrection?: SphereCorrection;
+    /** @default 1 */
+    moveSpeed?: number;
+    /** @default 1 */
+    zoomSpeed?: number;
+    /** @deprecated use the 'autorotate' plugin */
+    autorotateDelay?: number | null;
+    /** @deprecated use the 'autorotate' plugin */
+    autorotateIdle?: boolean;
+    /** @deprecated use the 'autorotate' plugin */
+    autorotateSpeed?: string | number;
+    /** @deprecated use the 'autorotate' plugin */
+    autorotateLat?: number;
+    /** @deprecated use the 'autorotate' plugin */
+    autorotateZoomLvl?: number;
+    /** @default true */
+    moveInertia?: boolean;
+    /** @default true */
+    mousewheel?: boolean;
+    /** @default true */
+    mousemove?: boolean;
+    /** @default false */
+    mousewheelCtrlKey?: boolean;
+    /** @default false */
+    touchmoveTwoFingers?: boolean;
+    /** @default true */
+    useXmpData?: boolean;
+    panoData?: PanoData | PanoDataProvider;
+    requestHeaders?: Record<string, string> | ((url: string) => Record<string, string>);
+    /** @default '#000' */
+    canvasBackground?: string;
+    /** @default false */
+    withCredentials?: boolean;
+    /** @default 'autorotate zoom move download description caption fullscreen' */
+    navbar?: boolean | string | Array<string | NavbarCustomButton>;
+    lang?: {
+        zoom: string;
+        zoomOut: string;
+        zoomIn: string;
+        moveUp: string;
+        moveDown: string;
+        moveLeft: string;
+        moveRight: string;
+        download: string;
+        fullscreen: string;
+        menu: string;
+        twoFingers: string;
+        ctrlZoom: string;
+        loadError: string;
+        [K: string]: string;
+    };
+    keyboard?: boolean | Record<string, ACTIONS>;
 };
 ```
 > This code is generated from the original library. Click [here](http://photo-sphere-viewer.js.org/guide/config.html) to see documentation.
 
 ### Plugins
-To use the standard library plugins provided by the original library, you need to pass the `plugins` prop to the component. The prop is an array of plugins. Each plugin can be a constructor or an array of constructor and options. To include them in the component, you need to import them directly from the "react-photo-sphere-viewer" package.
+To use the standard plugins provided by the original library, you need to pass the `plugins` prop to the component. The prop is an array of plugins. Each plugin can be a constructor or an array of constructor and options. To include them in the component, you need to import them directly from the "react-photo-sphere-viewer" package.
 
 ```jsx
 import { ReactPhotoSphereViewer, CompassPlugin, MarkersPlugin } from 'react-photo-sphere-viewer';
@@ -213,9 +250,39 @@ function App() {
 }
 ```
 
+#### Calling plugin methods and handling events from outside the component [**NEW**](https://github.com/Elius94/react-photo-sphere-viewer/issues/6)
+
+To handle events from outside the component, you need to declare the callback function in the `onReady(instance: Viewer)` prop. The `instance` is the instance of the viewer. You can call the plugin methods using the `instance.getPlugin()` method. The `instance.getPlugin()` method returns the plugin instance. You can call the plugin methods using the plugin instance.
+
+```jsx
+const handleReady = (instance) => {
+  const markersPlugs = instance.getPlugin(MarkersPlugin);
+  if (!markersPlugs)
+    return;
+  markersPlugs.addMarker({
+    id: "imageLayer2",
+    imageLayer: "drone.png",
+    size: { width: 220, height: 220 },
+    position: { yaw: '130.5deg', pitch: '-0.1deg' },
+    tooltip: "Image embedded in the scene"
+  });
+  markersPlugs.addEventListener("select-marker", () => {
+    console.log("asd");
+  });
+}
+
+return (
+  <div className="App">
+    <ReactPhotoSphereViewer src="Test_pano.jpg" plugins={plugins} height={'100vh'} width={"100%"} onReady={handleReady}></ReactPhotoSphereViewer>
+  </div>
+);
+```
+
 > Click [here](https://photo-sphere-viewer.js.org/plugins/) to see plugins documentation.
 
 ### Adapters
+
+**Note:** This feature is available from the new version, when a bug on the original library is fixed. In this version I can't export the "adapters" due to this bug. I will update the library as soon as the bug is fixed.
 
 To use the standard library adapters provided by the original library, you need to pass the `adapter` prop to the component. The prop is an array of adapters. Each adapter can be a constructor or an array of constructor and options. To include them in the component, you need to import them directly from the "react-photo-sphere-viewer" package.
 
@@ -231,17 +298,17 @@ All documented events are exported as props (function names).
 
 ```ts
 type ViewerEvents = {
-  onPositionChange?(lat: number, lng: number): any;
-  onZoomChange?(zoom: number): any;
-  onClick?(data: ClickData): void;
-  onDblclick?(data: ClickData): void;
-  onReady?(): void;
+  onPositionChange?(lat: number, lng: number, instance: Viewer): any;
+  onZoomChange?(data: events.ZoomUpdatedEvent & { type: "zoom-updated"; }, instance: Viewer): any;
+  onClick?(data: events.ClickEvent & { type: "click"; }, instance: Viewer): void;
+  onDblclick?(data: events.ClickEvent & { type: "dblclick"; }, instance: Viewer): void;
+  onReady?(instance: Viewer): void;
 }
 ```
 
 You can declare an event callback:
 ```js
-const handleClick = (data: ClickData) => {
+const handleClick = (data: events.ClickEvent & { type: "click"; }) => {
   console.log(data);
 }
 ```
@@ -262,6 +329,19 @@ const photoSphereRef = React.createRef<ReactPhotoSphereViewer>();
 
 // And calling the method
 photoSphereRef.current.zoom(10);
+
+// Or to be sure that the component is mounted
+React.useEffect(() => {
+  if (!photoSphereRef.current)
+    return;
+  photoSphereRef.current.animate({
+    yaw: 0,
+    pitch: 0,
+    zoom: 55,
+    speed: '10rpm',
+  }); // Or any other method
+}, [photoSphereRef]);
+
 ```
 And then:
 ```jsx
@@ -282,8 +362,6 @@ Currently managed methods are:
  - exitFullscreen()
  - toggleFullscreen()
  - isFullscreenEnabled()
- - startAutoRotate()
- - stopAutoRotate()
  - getPlugin(pluginName: string)
  - getPosition()
  - getZoomLevel()
