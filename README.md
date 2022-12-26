@@ -9,8 +9,8 @@ npm install react-photo-sphere-viewer
 ```
 
 ## Library Version
-Original Wrapped Library: [PhotoSphereViewer](https://github.com/mistic100/Photo-Sphere-Viewer) Version: 5.0.0 [<font color="green">**NEW**</font>]
-Now the component version is composed by the semantic version of the wrapper and the version of the original library. For example, the current version is 3.0.1-psv5.0.0. This means that the wrapper is in version 3.0.1 and the original library [psv](https://github.com/mistic100/Photo-Sphere-Viewer) is in version 5.0.0.
+Original Wrapped Library: [PhotoSphereViewer](https://github.com/mistic100/Photo-Sphere-Viewer) Version: 5.0.1 [<font color="green">**NEW**</font>]
+Now the component version is composed by the semantic version of the wrapper and the version of the original library. For example, the current version is 3.1.0-psv5.0.1. This means that the wrapper is in version 3.1.0 and the original library [psv](https://github.com/mistic100/Photo-Sphere-Viewer) is in version 5.0.1.
 
 ## Description
 
@@ -280,9 +280,7 @@ return (
 
 > Click [here](https://photo-sphere-viewer.js.org/plugins/) to see plugins documentation.
 
-### Adapters
-
-**Note:** This feature is available from the new version, when a bug on the original library is fixed. In this version I can't export the "adapters" due to this bug. I will update the library as soon as the bug is fixed.
+### Adapters (NEW - 3.1.0-psv5.0.1)
 
 To use the standard library adapters provided by the original library, you need to pass the `adapter` prop to the component. The prop is an array of adapters. Each adapter can be a constructor or an array of constructor and options. To include them in the component, you need to import them directly from the "react-photo-sphere-viewer" package.
 

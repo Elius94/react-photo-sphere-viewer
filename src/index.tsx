@@ -3,7 +3,8 @@ import React, {
     useEffect,
     useImperativeHandle,
     forwardRef,
-    createRef
+    createRef,
+    Ref
 } from "react"
 import {
     Viewer,
@@ -33,10 +34,10 @@ import { VideoPlugin, VideoPluginConfig } from "@photo-sphere-viewer/video-plugi
 import { VirtualTourPlugin, VirtualTourPluginConfig } from "@photo-sphere-viewer/virtual-tour-plugin"
 import { VisibleRangePlugin, VisibleRangePluginConfig } from "@photo-sphere-viewer/visible-range-plugin"
 import { CubemapAdapter, CubemapAdapterConfig } from "@photo-sphere-viewer/cubemap-adapter"
-/*import { CubemapTilesAdapter, CubemapTilesAdapterConfig } from "@photo-sphere-viewer/cubemap-tiles-adapter"
+import { CubemapTilesAdapter, CubemapTilesAdapterConfig } from "@photo-sphere-viewer/cubemap-tiles-adapter"
 import { CubemapVideoAdapter, CubemapVideoAdapterConfig } from "@photo-sphere-viewer/cubemap-video-adapter"
 import { EquirectangularTilesAdapter, EquirectangularTilesAdapterConfig } from "@photo-sphere-viewer/equirectangular-tiles-adapter"
-import { EquirectangularVideoAdapter, EquirectangularVideoAdapterConfig } from "@photo-sphere-viewer/equirectangular-video-adapter"*/
+import { EquirectangularVideoAdapter, EquirectangularVideoAdapterConfig } from "@photo-sphere-viewer/equirectangular-video-adapter"
 
 import "@photo-sphere-viewer/markers-plugin/index.css"
 import EventEmitter from "eventemitter3"
@@ -117,7 +118,7 @@ function map(_in: number, inMin: number, inMax: number, outMin: number, outMax: 
     return (_in - inMin) * (outMax - outMin) / (inMax - inMin) + outMin
 }
 
-const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.ReactElement => {
+const ReactPhotoSphereViewer = forwardRef((options: Props, ref: unknown): React.ReactElement => {
     const sphereElementRef = createRef<HTMLDivElement>()
     const [spherePlayerInstance, setSpherePlayerInstance] = useState<Viewer | undefined>()
     let LITTLEPLANET_MAX_ZOOM = 130
@@ -174,7 +175,7 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.Reac
                 keyboard: options.keyboard || {},
                 plugins: [
                     [
-                        AutorotatePlugin as unknown as PluginConstructor,
+                        AutorotatePlugin,
                         {
                             autorotatePitch: "5deg",
                             autostartDelay: undefined,
@@ -210,7 +211,7 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.Reac
                             speed: "10rpm",
                         }).then(() => {
                             // Disable Little Planet.
-                            const p = _c.getPlugin(AutorotatePlugin as unknown as PluginConstructor) as AutorotatePlugin
+                            const p = _c.getPlugin("autorotate") as AutorotatePlugin
                             if (p) p.start()
                             _c.setOption("maxFov", options.maxFov || 70)
                             _c.setOption("mousewheel", options.mousewheel || true)
@@ -242,7 +243,7 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.Reac
                     className: "resetLittlePlanetButton",
                     onClick: () => {
                         littlePlanetEnabled = true
-                        const p = _c.getPlugin(AutorotatePlugin as unknown as PluginConstructor) as AutorotatePlugin
+                        const p = _c.getPlugin("autorotate") as AutorotatePlugin
                         if (p) p.stop()
                         _c.setOption("maxFov", LITTLEPLANET_MAX_ZOOM)
                         //_c.setOption("fisheye", LITTLEPLANET_FISHEYE) // @ts-ignore ts(2345)
@@ -281,13 +282,13 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.Reac
             }).on("zoomOut", () => {
                 _c.zoomOut()
             }).on("startAutoRotate", () => {
-                const p = _c.getPlugin(AutorotatePlugin as unknown as PluginConstructor) as AutorotatePlugin
+                const p = _c.getPlugin("autorotate") as AutorotatePlugin
                 if (p) p.start()
             }).on("stopAutoRotate", () => {
-                const p = _c.getPlugin(AutorotatePlugin as unknown as PluginConstructor) as AutorotatePlugin
+                const p = _c.getPlugin("autorotate") as AutorotatePlugin
                 if (p) p.stop()
             }).on("toggleAutorotate", () => {
-                const p = _c.getPlugin(AutorotatePlugin as unknown as PluginConstructor) as AutorotatePlugin
+                const p = _c.getPlugin("autorotate") as AutorotatePlugin
                 if (p) p.toggle()
             })
 
@@ -296,7 +297,7 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.Reac
     }, [sphereElementRef, options])
 
     // Methods
-    useImperativeHandle(ref, () => ({
+    useImperativeHandle(ref as Ref<unknown>, () => ({
         animate(options: AnimateOptions) {
             Emitter.emit("animate", options)
         },
@@ -306,7 +307,7 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: any): React.Reac
         rotate(options: { x: number, y: number }) {
             Emitter.emit("rotate", options)
         },
-        setOption(option: keyof ViewerConfig, value: any): void {
+        setOption(option: keyof ViewerConfig, value: unknown): void {
             Emitter.emit("setOption", { option, value })
         },
         setOptions(options: ViewerConfig): void {
@@ -404,9 +405,9 @@ export {
     VirtualTourPlugin, VirtualTourPluginConfig,
     VisibleRangePlugin, VisibleRangePluginConfig,
     CubemapAdapter, CubemapAdapterConfig,
-    /*CubemapTilesAdapter, CubemapTilesAdapterConfig,
+    CubemapTilesAdapter, CubemapTilesAdapterConfig,
     CubemapVideoAdapter, CubemapVideoAdapterConfig,
     EquirectangularTilesAdapter, EquirectangularTilesAdapterConfig,
-    EquirectangularVideoAdapter, EquirectangularVideoAdapterConfig,*/
+    EquirectangularVideoAdapter, EquirectangularVideoAdapterConfig,
     AbstractPlugin, AbstractAdapter
 }
