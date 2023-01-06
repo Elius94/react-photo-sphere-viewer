@@ -173,12 +173,14 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: unknown): React.
                 sphereCorrection: options.sphereCorrection || { pan: 0, tilt: 0, roll: 0 },
                 moveSpeed: options.moveSpeed || 1,
                 zoomSpeed: options.zoomSpeed || 1,
-                moveInertia: options.moveInertia || true,
-                mousewheel: options.littlePlanet ? false : options.mousewheel || true,
-                mousemove: options.mousemove || true,
+                // when it undefined, = true, then use input value.
+                // The input value maybe false, value || true => false => true
+                moveInertia: options.moveInertia ?? true,
+                mousewheel: options.littlePlanet ? false : options.mousewheel ?? true,
+                mousemove: options.mousemove ?? true,
                 mousewheelCtrlKey: options.mousewheelCtrlKey || false,
                 touchmoveTwoFingers: options.touchmoveTwoFingers || false,
-                useXmpData: options.useXmpData || true,
+                useXmpData: options.useXmpData ?? true,
                 panoData: options.panoData || {} as PanoData,
                 requestHeaders: options.requestHeaders || {},
                 canvasBackground: options.canvasBackground || "#000",
@@ -227,7 +229,7 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: unknown): React.
                             const p = _c.getPlugin("autorotate") as AutorotatePlugin
                             if (p) p.start()
                             _c.setOption("maxFov", options.maxFov || 70)
-                            _c.setOption("mousewheel", options.mousewheel || true)
+                            _c.setOption("mousewheel", options.mousewheel ?? true)
                         })
                     })
                 }
