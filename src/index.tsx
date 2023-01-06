@@ -68,7 +68,7 @@ const omittedProps = [
 
 export interface Props extends ViewerConfig {
     src: string;
-    navbar?: string[];
+    navbar?: boolean | string | Array<string | NavbarCustomButton>;
     height: string;
     width?: string;
     containerClass?: string;
@@ -118,6 +118,17 @@ function map(_in: number, inMin: number, inMax: number, outMin: number, outMax: 
     return (_in - inMin) * (outMax - outMin) / (inMax - inMin) + outMin
 }
 
+function filterNavbar(navbar?: boolean | string | Array<string | NavbarCustomButton>): false | Array<string | NavbarCustomButton> {
+    if (navbar == null) return defaultNavbar;
+    if (!Array.isArray(navbar)) {
+        if (typeof navbar === 'string') {
+            return navbar === '' ? false : [navbar];
+        }
+        return navbar ? defaultNavbar : false;
+    }
+    return navbar;
+}
+
 const ReactPhotoSphereViewer = forwardRef((options: Props, ref: unknown): React.ReactElement => {
     const sphereElementRef = createRef<HTMLDivElement>()
     const [spherePlayerInstance, setSpherePlayerInstance] = useState<Viewer | undefined>()
@@ -143,6 +154,8 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: unknown): React.
     useEffect(() => {
         let littlePlanetEnabled = true
         if (sphereElementRef.current && !spherePlayerInstance) {
+
+
             const _c = new Viewer({
                 ...adaptOptions(options),
                 container: sphereElementRef.current,
@@ -170,7 +183,7 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: unknown): React.
                 requestHeaders: options.requestHeaders || {},
                 canvasBackground: options.canvasBackground || "#000",
                 withCredentials: options.withCredentials || false,
-                navbar: options.navbar || defaultNavbar,
+                navbar: filterNavbar(options.navbar),
                 lang: options.lang || {} as keyof Props["lang"],
                 keyboard: options.keyboard || {},
                 plugins: [
@@ -256,8 +269,8 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: unknown): React.
                         })
                     },
                 }
-                const _currentNavbar: Array<string | NavbarCustomButton> = options.navbar || defaultNavbar
-                if (!_currentNavbar.find((item) => typeof item === "object" && item?.id === "resetLittlePlanetButton")) {
+                const _currentNavbar = filterNavbar(options.navbar);
+                if (_currentNavbar !== false && !_currentNavbar.find((item) => typeof item === "object" && item?.id === "resetLittlePlanetButton")) {
                     _currentNavbar.push(resetLittlePlanetButton)
                     _c.setOption("navbar", _currentNavbar)
                     setCurrentNavbar(_currentNavbar)
@@ -388,7 +401,7 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: unknown): React.
     }), [spherePlayerInstance, sphereElementRef, options, ref])
 
     return (
-        <div className={options.containerClass || "view-container"} ref={sphereElementRef} />
+      <div className={options.containerClass || "view-container"} ref={sphereElementRef} />
     )
 })
 
