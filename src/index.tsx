@@ -68,7 +68,7 @@ const omittedProps = [
 
 export interface Props extends ViewerConfig {
     src: string;
-    navbar?: string[];
+    navbar?: boolean | string | Array<string | NavbarCustomButton>;
     height: string;
     width?: string;
     containerClass?: string;
@@ -118,6 +118,17 @@ function map(_in: number, inMin: number, inMax: number, outMin: number, outMax: 
     return (_in - inMin) * (outMax - outMin) / (inMax - inMin) + outMin
 }
 
+function filterNavbar(navbar?: boolean | string | Array<string | NavbarCustomButton>): false | Array<string | NavbarCustomButton> {
+    if (navbar == null) return defaultNavbar;
+    if (!Array.isArray(navbar)) {
+        if (typeof navbar === 'string') {
+            return navbar === '' ? false : [navbar];
+        }
+        return navbar ? defaultNavbar : false;
+    }
+    return navbar;
+}
+
 const ReactPhotoSphereViewer = forwardRef((options: Props, ref: unknown): React.ReactElement => {
     const sphereElementRef = createRef<HTMLDivElement>()
     const [spherePlayerInstance, setSpherePlayerInstance] = useState<Viewer | undefined>()
@@ -143,6 +154,8 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: unknown): React.
     useEffect(() => {
         let littlePlanetEnabled = true
         if (sphereElementRef.current && !spherePlayerInstance) {
+
+
             const _c = new Viewer({
                 ...adaptOptions(options),
                 container: sphereElementRef.current,
@@ -160,17 +173,19 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: unknown): React.
                 sphereCorrection: options.sphereCorrection || { pan: 0, tilt: 0, roll: 0 },
                 moveSpeed: options.moveSpeed || 1,
                 zoomSpeed: options.zoomSpeed || 1,
-                moveInertia: options.moveInertia || true,
-                mousewheel: options.littlePlanet ? false : options.mousewheel || true,
-                mousemove: options.mousemove || true,
+                // when it undefined, = true, then use input value.
+                // The input value maybe false, value || true => false => true
+                moveInertia: options.moveInertia ?? true,
+                mousewheel: options.littlePlanet ? false : options.mousewheel ?? true,
+                mousemove: options.mousemove ?? true,
                 mousewheelCtrlKey: options.mousewheelCtrlKey || false,
                 touchmoveTwoFingers: options.touchmoveTwoFingers || false,
-                useXmpData: options.useXmpData || true,
+                useXmpData: options.useXmpData ?? true,
                 panoData: options.panoData || {} as PanoData,
                 requestHeaders: options.requestHeaders || {},
                 canvasBackground: options.canvasBackground || "#000",
                 withCredentials: options.withCredentials || false,
-                navbar: options.navbar || defaultNavbar,
+                navbar: filterNavbar(options.navbar),
                 lang: options.lang || {} as keyof Props["lang"],
                 keyboard: options.keyboard || {},
                 plugins: [
@@ -214,7 +229,7 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: unknown): React.
                             const p = _c.getPlugin("autorotate") as AutorotatePlugin
                             if (p) p.start()
                             _c.setOption("maxFov", options.maxFov || 70)
-                            _c.setOption("mousewheel", options.mousewheel || true)
+                            _c.setOption("mousewheel", options.mousewheel ?? true)
                         })
                     })
                 }
@@ -256,8 +271,8 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: unknown): React.
                         })
                     },
                 }
-                const _currentNavbar: Array<string | NavbarCustomButton> = options.navbar || defaultNavbar
-                if (!_currentNavbar.find((item) => typeof item === "object" && item?.id === "resetLittlePlanetButton")) {
+                const _currentNavbar = filterNavbar(options.navbar);
+                if (_currentNavbar !== false && !_currentNavbar.find((item) => typeof item === "object" && item?.id === "resetLittlePlanetButton")) {
                     _currentNavbar.push(resetLittlePlanetButton)
                     _c.setOption("navbar", _currentNavbar)
                     setCurrentNavbar(_currentNavbar)
@@ -388,7 +403,7 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: unknown): React.
     }), [spherePlayerInstance, sphereElementRef, options, ref])
 
     return (
-        <div className={options.containerClass || "view-container"} ref={sphereElementRef} />
+      <div className={options.containerClass || "view-container"} ref={sphereElementRef} />
     )
 })
 
