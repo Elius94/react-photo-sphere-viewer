@@ -4,7 +4,8 @@ import React, {
     useImperativeHandle,
     forwardRef,
     createRef,
-    Ref
+    Ref,
+    useRef
 } from "react"
 import {
     Viewer,
@@ -131,7 +132,7 @@ function filterNavbar(navbar?: boolean | string | Array<string | NavbarCustomBut
 
 const ReactPhotoSphereViewer = forwardRef((options: Props, ref: unknown): React.ReactElement => {
     const sphereElementRef = createRef<HTMLDivElement>()
-    const [spherePlayerInstance, setSpherePlayerInstance] = useState<Viewer | undefined>()
+    const spherePlayerInstance = useRef<Viewer | null>(null)
     let LITTLEPLANET_MAX_ZOOM = 130
     const [LITTLEPLANET_DEF_LAT] = useState(-90)
     const [LITTLEPLANET_FISHEYE] = useState(2)
@@ -153,9 +154,7 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: unknown): React.
 
     useEffect(() => {
         let littlePlanetEnabled = true
-        if (sphereElementRef.current && !spherePlayerInstance) {
-
-
+        if (sphereElementRef.current && !spherePlayerInstance.current) {
             const _c = new Viewer({
                 ...adaptOptions(options),
                 container: sphereElementRef.current,
@@ -307,7 +306,7 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: unknown): React.
                 if (p) p.toggle()
             })
 
-            setSpherePlayerInstance(_c)
+            spherePlayerInstance.current = _c
         }
     }, [sphereElementRef, options])
 
@@ -326,7 +325,7 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: unknown): React.
             Emitter.emit("setOption", { option, value })
         },
         setOptions(options: ViewerConfig): void {
-            return spherePlayerInstance?.setOptions(options)
+            return spherePlayerInstance.current?.setOptions(options)
         },
         getCurrentNavbar(): (string | object)[] {
             return currentNavbar
@@ -341,19 +340,19 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: unknown): React.
             Emitter.emit("zoomOut", {})
         },
         resize(size: CssSize) {
-            return spherePlayerInstance?.resize(size)
+            return spherePlayerInstance.current?.resize(size)
         },
         enterFullscreen() {
-            return spherePlayerInstance?.enterFullscreen()
+            return spherePlayerInstance.current?.enterFullscreen()
         },
         exitFullscreen() {
-            return spherePlayerInstance?.exitFullscreen()
+            return spherePlayerInstance.current?.exitFullscreen()
         },
         toggleFullscreen() {
-            return spherePlayerInstance?.toggleFullscreen()
+            return spherePlayerInstance.current?.toggleFullscreen()
         },
         isFullscreenEnabled() {
-            return spherePlayerInstance?.isFullscreenEnabled()
+            return spherePlayerInstance.current?.isFullscreenEnabled()
         },
         startAutoRotate() {
             Emitter.emit("startAutoRotate", {})
@@ -362,45 +361,45 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: unknown): React.
             Emitter.emit("stopAutoRotate", {})
         },
         getPlugin(pluginName: string) {
-            return spherePlayerInstance?.getPlugin(pluginName)
+            return spherePlayerInstance.current?.getPlugin(pluginName)
         },
         getPosition() {
-            return spherePlayerInstance?.getPosition()
+            return spherePlayerInstance.current?.getPosition()
         },
         getZoomLevel() {
-            return spherePlayerInstance?.getZoomLevel()
+            return spherePlayerInstance.current?.getZoomLevel()
         },
         getSize() {
-            return spherePlayerInstance?.getSize()
+            return spherePlayerInstance.current?.getSize()
         },
         needsUpdate() {
-            return spherePlayerInstance?.needsUpdate()
+            return spherePlayerInstance.current?.needsUpdate()
         },
         autoSize() {
-            return spherePlayerInstance?.autoSize()
+            return spherePlayerInstance.current?.autoSize()
         },
         setPanorama(path: string, options?: object) {
-            return spherePlayerInstance?.setPanorama(path, options)
+            return spherePlayerInstance.current?.setPanorama(path, options)
         },
         setOverlay(path: string, opacity?: number) {
-            return spherePlayerInstance?.setOverlay(path, opacity)
+            return spherePlayerInstance.current?.setOverlay(path, opacity)
         },
         toggleAutorotate() {
             Emitter.emit("toggleAutorotate", {})
         },
         showError(message: string) {
-            return spherePlayerInstance?.showError(message)
+            return spherePlayerInstance.current?.showError(message)
         },
         hideError() {
-            return spherePlayerInstance?.hideError()
+            return spherePlayerInstance.current?.hideError()
         },
         startKeyboardControl() {
-            return spherePlayerInstance?.startKeyboardControl()
+            return spherePlayerInstance.current?.startKeyboardControl()
         },
         stopKeyboardControl() {
-            return spherePlayerInstance?.stopKeyboardControl()
+            return spherePlayerInstance.current?.stopKeyboardControl()
         }
-    }), [spherePlayerInstance, sphereElementRef, options, ref])
+    }), [spherePlayerInstance.current, sphereElementRef, options, ref])
 
     return (
         <div className={options.containerClass || "view-container"} ref={sphereElementRef} />
