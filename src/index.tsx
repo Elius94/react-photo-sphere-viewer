@@ -34,13 +34,22 @@ import { StereoPlugin } from "@photo-sphere-viewer/stereo-plugin"
 import { VideoPlugin, VideoPluginConfig } from "@photo-sphere-viewer/video-plugin"
 import { VirtualTourPlugin, VirtualTourPluginConfig } from "@photo-sphere-viewer/virtual-tour-plugin"
 import { VisibleRangePlugin, VisibleRangePluginConfig } from "@photo-sphere-viewer/visible-range-plugin"
+import { MapPlugin, MapPluginConfig } from "@photo-sphere-viewer/map-plugin"
 import { CubemapAdapter, CubemapAdapterConfig } from "@photo-sphere-viewer/cubemap-adapter"
 import { CubemapTilesAdapter, CubemapTilesAdapterConfig } from "@photo-sphere-viewer/cubemap-tiles-adapter"
 import { CubemapVideoAdapter, CubemapVideoAdapterConfig } from "@photo-sphere-viewer/cubemap-video-adapter"
 import { EquirectangularTilesAdapter, EquirectangularTilesAdapterConfig } from "@photo-sphere-viewer/equirectangular-tiles-adapter"
 import { EquirectangularVideoAdapter, EquirectangularVideoAdapterConfig } from "@photo-sphere-viewer/equirectangular-video-adapter"
+import { LensflarePlugin } from "photo-sphere-viewer-lensflare-plugin"
 
 import "@photo-sphere-viewer/markers-plugin/index.css"
+import "@photo-sphere-viewer/compass-plugin/index.css"
+import "@photo-sphere-viewer/gallery-plugin/index.css"
+import "@photo-sphere-viewer/settings-plugin/index.css"
+import "@photo-sphere-viewer/video-plugin/index.css"
+import "@photo-sphere-viewer/virtual-tour-plugin/index.css"
+import "@photo-sphere-viewer/map-plugin/index.css"
+
 import EventEmitter from "eventemitter3"
 
 
@@ -86,6 +95,7 @@ export interface Props extends ViewerConfig {
         download: string;
         fullscreen: string;
         menu: string;
+        close: string;
         twoFingers: string;
         ctrlZoom: string;
         loadError: string;
@@ -418,10 +428,12 @@ export {
     VideoPlugin, VideoPluginConfig,
     VirtualTourPlugin, VirtualTourPluginConfig,
     VisibleRangePlugin, VisibleRangePluginConfig,
+    MapPlugin, MapPluginConfig,
     CubemapAdapter, CubemapAdapterConfig,
     CubemapTilesAdapter, CubemapTilesAdapterConfig,
     CubemapVideoAdapter, CubemapVideoAdapterConfig,
     EquirectangularTilesAdapter, EquirectangularTilesAdapterConfig,
     EquirectangularVideoAdapter, EquirectangularVideoAdapterConfig,
-    AbstractPlugin, AbstractAdapter
+    AbstractPlugin, AbstractAdapter,
+    LensflarePlugin
 }

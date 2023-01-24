@@ -1,5 +1,5 @@
 import './App.css';
-import { ReactPhotoSphereViewer, MarkersPlugin } from 'react-photo-sphere-viewer';
+import { ReactPhotoSphereViewer, MarkersPlugin, LensflarePlugin } from 'react-photo-sphere-viewer';
 import React from 'react';
 
 function App() {
@@ -53,6 +53,19 @@ function App() {
             size: { width: 220, height: 220 },
             position: { yaw: '13.5deg', pitch: '-0.1deg' },
             tooltip: "Image embedded in the scene"
+          }
+        ]
+      }
+    ],
+    [
+      LensflarePlugin,
+      {
+        // list of lensflares
+        lensflares: [
+          {
+            id: 'sun',
+            position: { yaw: '145deg', pitch: '2deg' },
+            type: 0,
           }
         ]
       }

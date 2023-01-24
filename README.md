@@ -9,8 +9,8 @@ npm install react-photo-sphere-viewer
 ```
 
 ## Library Version
-Original Wrapped Library: [PhotoSphereViewer](https://github.com/mistic100/Photo-Sphere-Viewer) Version: 5.0.2 [<font color="green">**NEW**</font>]
-Now the component version is composed by the semantic version of the wrapper and the version of the original library. For example, the current version is 3.2.0-psv5.0.2. This means that the wrapper is in version 3.2.0 and the original library [psv](https://github.com/mistic100/Photo-Sphere-Viewer) is in version 5.0.2.
+Original Wrapped Library: [PhotoSphereViewer](https://github.com/mistic100/Photo-Sphere-Viewer) Version: 5.1.0 [<font color="green">**NEW**</font>]
+Now the component version is composed by the semantic version of the wrapper and the version of the original library. For example, the current version is 3.3.0-psv5.1.0. This means that the wrapper is in version 3.3.0 and the original library [psv](https://github.com/mistic100/Photo-Sphere-Viewer) is in version 5.1.0.
 
 ## Description
 
@@ -188,6 +188,7 @@ type ViewerConfig = {
         download: string;
         fullscreen: string;
         menu: string;
+        close: string;
         twoFingers: string;
         ctrlZoom: string;
         loadError: string;
@@ -200,6 +201,8 @@ type ViewerConfig = {
 
 ### Plugins
 To use the standard plugins provided by the original library, you need to pass the `plugins` prop to the component. The prop is an array of plugins. Each plugin can be a constructor or an array of constructor and options. To include them in the component, you need to import them directly from the "react-photo-sphere-viewer" package.
+
+> The only "third-party" plugin that is supported is the "Lensflare" plugin. To use it, you need to import it from the "react-photo-sphere-viewer" package.
 
 ```jsx
 import { ReactPhotoSphereViewer, CompassPlugin, MarkersPlugin } from 'react-photo-sphere-viewer';
