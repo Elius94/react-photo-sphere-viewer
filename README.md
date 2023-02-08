@@ -10,7 +10,7 @@ npm install react-photo-sphere-viewer
 
 ## Library Version
 Original Wrapped Library: [PhotoSphereViewer](https://github.com/mistic100/Photo-Sphere-Viewer) Version: 5.1.1 [<font color="green">**NEW**</font>]
-Now the component version is composed by the semantic version of the wrapper and the version of the original library. For example, the current version is 3.3.2-psv5.1.1. This means that the wrapper is in version 3.3.2 and the original library [psv](https://github.com/mistic100/Photo-Sphere-Viewer) is in version 5.1.1.
+Now the component version is composed by the semantic version of the wrapper and the version of the original library. For example, the current version is 3.3.3-psv5.1.1. This means that the wrapper is in version 3.3.3 and the original library [psv](https://github.com/mistic100/Photo-Sphere-Viewer) is in version 5.1.1.
 
 ## Description
 
