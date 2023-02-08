@@ -23,7 +23,7 @@ import {
 } from "@photo-sphere-viewer/core"
 import "./styles.css"
 import "@photo-sphere-viewer/core/index.css"
-import { AutorotatePlugin } from "@photo-sphere-viewer/autorotate-plugin"
+import { AutorotatePlugin, AutorotatePluginConfig } from "@photo-sphere-viewer/autorotate-plugin"
 import { MarkersPlugin, MarkersPluginConfig } from "@photo-sphere-viewer/markers-plugin"
 import { CompassPlugin, CompassPluginConfig } from "@photo-sphere-viewer/compass-plugin"
 import { GalleryPlugin, GalleryPluginConfig } from "@photo-sphere-viewer/gallery-plugin"
@@ -418,6 +418,7 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: unknown): React.
 
 export {
     ReactPhotoSphereViewer,
+    AutorotatePlugin, AutorotatePluginConfig,
     MarkersPlugin, MarkersPluginConfig,
     CompassPlugin, CompassPluginConfig,
     GalleryPlugin, GalleryPluginConfig,
