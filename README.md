@@ -72,6 +72,9 @@ export default function Home() {
 }
 ```
 
+> [!IMPORTANT]
+> To use `<ReactPhotoSphereViewer />` in Next.js with App Router, make sure to include [`"use client"`](https://nextjs.org/docs/app/building-your-application/rendering/client-components#using-client-components-in-nextjs) in your component embedding the viewer. Refer to the [documentation](https://nextjs.org/docs/app/building-your-application/rendering/client-components#using-client-components-in-nextjs) for more details.
+
 ## Little planet mode
 
 I've added this custom effect that allows you to display the panorama like a little planet. To enable it, you need to pass the `littlePlanet` prop to the component.
