@@ -1,12 +1,4 @@
-import React, {
-    useState,
-    useEffect,
-    useImperativeHandle,
-    forwardRef,
-    createRef,
-    Ref,
-    useRef
-} from "react"
+import React, { useState, useEffect, useImperativeHandle, forwardRef, useRef, useCallback, useMemo } from "react"
 import {
     Viewer,
     ViewerConfig,
@@ -75,8 +67,8 @@ const omittedProps = [
     "onDblclick",
     "onReady",
 ]
-
-export interface Props extends ViewerConfig {
+type MakeOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+export interface Props extends MakeOptional<ViewerConfig, "container"> {
     src: string;
     navbar?: boolean | string | Array<string | NavbarCustomButton>;
     height: string;
@@ -140,8 +132,92 @@ function filterNavbar(navbar?: boolean | string | Array<string | NavbarCustomBut
     return navbar
 }
 
-const ReactPhotoSphereViewer = forwardRef((options: Props, ref: unknown): React.ReactElement => {
-    const sphereElementRef = createRef<HTMLDivElement>()
+function useDomElement(): [HTMLDivElement | undefined, (r: HTMLDivElement) => void] {
+    const [element, setElement] = useState<HTMLDivElement>()
+    const ref = useCallback(
+        (r: HTMLDivElement) => {
+            if (r && r !== element) {
+                setElement(r)
+            }
+        },
+        [element]
+    )
+    return [element, ref]
+}
+
+export interface ViewerAPI {
+    animate(options: AnimateOptions): void;
+    destroy(): void;
+    rotate(options: { x: number; y: number }): void;
+    setOption(option: keyof ViewerConfig, value: unknown): void;
+    setOptions(options: ViewerConfig): void;
+    getCurrentNavbar(): (string | object)[] | void;
+    zoom(value: number): void;
+    zoomIn(): void;
+    zoomOut(): void;
+    resize(size: CssSize): void;
+    enterFullscreen(): void;
+    exitFullscreen(): void;
+    toggleFullscreen(): void;
+    isFullscreenEnabled(): boolean | void;
+    startAutoRotate(): void;
+    stopAutoRotate(): void;
+    getPlugin(pluginName: string): unknown | void;
+    getPosition(): unknown | void; // Specify the return type
+    getZoomLevel(): unknown | void; // Specify the return type
+    getSize(): unknown | void; // Specify the return type
+    needsUpdate(): boolean | void;
+    autoSize(): void;
+    setPanorama(path: string, options?: object): void;
+    setOverlay(path: string, opacity?: number): void;
+    toggleAutorotate(): void;
+    showError(message: string): void;
+    hideError(): void;
+    startKeyboardControl(): void;
+    stopKeyboardControl(): void;
+}
+
+const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.ReactElement => {
+    const [sphereElement, setRef] = useDomElement()
+    const options = useMemo(
+        () => props,
+        [
+            // recreate options when individual props change
+            props.src,
+            props.navbar,
+            props.height,
+            props.width,
+            props.containerClass,
+            props.littlePlanet,
+            props.fishEye,
+            props.lang,
+            props.onPositionChange,
+            props.onZoomChange,
+            props.onClick,
+            props.onDblclick,
+            props.onReady,
+            props.moveSpeed,
+            props.zoomSpeed,
+            props.moveInertia,
+            props.mousewheel,
+            props.mousemove,
+            props.mousewheelCtrlKey,
+            props.touchmoveTwoFingers,
+            props.useXmpData,
+            props.panoData,
+            props.requestHeaders,
+            props.canvasBackground,
+            props.withCredentials,
+            props.keyboard,
+            props.plugins,
+            props.sphereCorrection,
+            props.minFov,
+            props.maxFov,
+            props.defaultZoomLvl,
+            props.defaultYaw,
+            props.defaultPitch,
+        ]
+    )
     const spherePlayerInstance = useRef<Viewer | null>(null)
     let LITTLEPLANET_MAX_ZOOM = 130
     const [LITTLEPLANET_DEF_LAT] = useState(-90)
@@ -164,10 +240,10 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: unknown): React.
 
     useEffect(() => {
         let littlePlanetEnabled = true
-        if (sphereElementRef.current && !spherePlayerInstance.current) {
+        if (sphereElement && !spherePlayerInstance.current) {
             const _c = new Viewer({
                 ...adaptOptions(options),
-                container: sphereElementRef.current,
+                container: sphereElement,
                 panorama: options.src,
                 size: {
                     height: options.height,
@@ -318,10 +394,15 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: unknown): React.
 
             spherePlayerInstance.current = _c
         }
-    }, [sphereElementRef, options])
+    }, [sphereElement, options])
 
-    // Methods
-    useImperativeHandle(ref as Ref<unknown>, () => ({
+    useEffect(() => {
+        if (spherePlayerInstance.current) {
+            spherePlayerInstance.current.setPanorama(options.src, options)
+        }
+    }, [options.src])
+
+    const _imperativeHandle = () => ({ 
         animate(options: AnimateOptions) {
             Emitter.emit("animate", options)
         },
@@ -408,12 +489,17 @@ const ReactPhotoSphereViewer = forwardRef((options: Props, ref: unknown): React.
         },
         stopKeyboardControl() {
             return spherePlayerInstance.current?.stopKeyboardControl()
-        }
-    }), [spherePlayerInstance.current, sphereElementRef, options, ref])
+        },
+    })
+    // Methods
+    useImperativeHandle(ref, _imperativeHandle, [
+        spherePlayerInstance.current,
+        sphereElement,
+        options,
+        ref,
+    ])
 
-    return (
-        <div className={options.containerClass || "view-container"} ref={sphereElementRef} />
-    )
+    return <div className={options.containerClass || "view-container"} ref={setRef} />
 })
 
 export {
