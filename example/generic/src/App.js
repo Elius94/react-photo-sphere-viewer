@@ -19,13 +19,6 @@ function App() {
     if (!markersPlugs)
       return;
     console.log(markersPlugs);
-    markersPlugs.addMarker({
-      id: "imageLayer2",
-      imageLayer: "drone.png",
-      size: { width: 220, height: 220 },
-      position: { yaw: '130.5deg', pitch: '-0.1deg' },
-      tooltip: "Image embedded in the scene"
-    });
     markersPlugs.addEventListener("select-marker", () => {
       console.log("asd");
     });
@@ -49,7 +42,7 @@ function App() {
           {
             // image marker rendered in the 3D scene
             id: "imageLayer",
-            imageLayer: "drone.png",
+            image: "drone.png",
             size: { width: 220, height: 220 },
             position: { yaw: '13.5deg', pitch: '-0.1deg' },
             tooltip: "Image embedded in the scene"
