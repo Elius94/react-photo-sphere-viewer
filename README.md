@@ -10,7 +10,7 @@ npm install react-photo-sphere-viewer
 
 ## Library Version
 Original Wrapped Library: [PhotoSphereViewer](https://github.com/mistic100/Photo-Sphere-Viewer) Version: 5.4.4 [<font color="green">**NEW**</font>]
-Now the component version is composed by the semantic version of the wrapper and the version of the original library. For example, the current version is 4.0.0-psv5.4.0. This means that the wrapper is in version 4.0.0 and the original library [psv](https://github.com/mistic100/Photo-Sphere-Viewer) is in version 5.4.4.
+Now the component version is composed by the semantic version of the wrapper and the version of the original library. For example, the current version is 4.0.1-psv5.4.4. This means that the wrapper is in version 4.0.1 and the original library [psv](https://github.com/mistic100/Photo-Sphere-Viewer) is in version 5.4.4.
 
 ## Description
 
@@ -285,6 +285,11 @@ return (
 ```
 
 > Click [here](https://photo-sphere-viewer.js.org/plugins/) to see plugins documentation.
+
+### Note for Virtual Tour Plugin
+Please follow this Sandbox template to see how to use the original plugin: [Sandbox](https://codesandbox.io/s/react-photo-sphere-viewer-virtual-tour-example-xg8tp4) 
+
+Please remember to set the 'src' prop of the ReactPhotoSphereViewer component to a placeholder image, it colud be for example the first picture of the virtual tour. [#36](https://github.com/Elius94/react-photo-sphere-viewer/issues/36)
 
 ### Adapters (NEW - 3.1.0-psv5.0.1)
 
