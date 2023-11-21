@@ -267,7 +267,7 @@ const handleReady = (instance) => {
     return;
   markersPlugs.addMarker({
     id: "imageLayer2",
-    imageLayer: "drone.png",
+    image: "drone.png",
     size: { width: 220, height: 220 },
     position: { yaw: '130.5deg', pitch: '-0.1deg' },
     tooltip: "Image embedded in the scene"
