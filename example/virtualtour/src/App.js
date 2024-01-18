@@ -129,11 +129,11 @@ function App() {
         touchmoveTwoFingers={true}
         mousewheelCtrlKey={true}
         defaultYaw={"130deg"}
-        navbar={"zoom move gallery caption fullscreen"}
+        navbar={["zoom", "move", "download", "description", "caption", "fullscreen"]}
         height={"100vh"}
         width={"100%"}
+        hideNavbarButton={true}
         onReady={handleReady}
-        littlePlanet={false}
         plugins={plugins}
         container={"container-360"}
         src={baseUrl + "tour/key-biscayne-3.jpg"}
