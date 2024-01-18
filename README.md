@@ -9,8 +9,8 @@ npm install react-photo-sphere-viewer
 ```
 
 ## Library Version
-Original Wrapped Library: [PhotoSphereViewer](https://github.com/mistic100/Photo-Sphere-Viewer) Version: 5.4.4 [<font color="green">**NEW**</font>]
-Now the component version is composed by the semantic version of the wrapper and the version of the original library. For example, the current version is 4.0.2-psv5.4.4. This means that the wrapper is in version 4.0.2 and the original library [psv](https://github.com/mistic100/Photo-Sphere-Viewer) is in version 5.4.4.
+Original Wrapped Library: [PhotoSphereViewer](https://github.com/mistic100/Photo-Sphere-Viewer) Version: 5.5.2 [<font color="green">**NEW**</font>]
+Now the component version is composed by the semantic version of the wrapper and the version of the original library. For example, the current version is 4.1.0-psv5.5.2. This means that the wrapper is in version 4.1.0 and the original library [psv](https://github.com/mistic100/Photo-Sphere-Viewer) is in version 5.5.2.
 
 ## Description
 
@@ -97,6 +97,7 @@ type standardProps = {
   width?: number;
   containerClass?: string; // The class name of the div that wrap the component.
   littlePlanet?: boolean; // Display the panorama like a little planet.
+  hideNavbarButton?: boolean; // Hide the navbar button.
 }
 ```
 #### Original props
@@ -110,8 +111,9 @@ Currently all options of the original library are supported and exported as prop
 type ViewerConfig = {
     container: HTMLElement | string;
     panorama?: any;
+    /** @deprecated Use the `overlay` plugin instead */
     overlay?: any;
-    /** @default 1 */
+    /** @deprecated Use the `overlay` plugin instead */
     overlayOpacity?: number;
     /** @default equirectangular */
     adapter?: AdapterConstructor | [AdapterConstructor, any];
@@ -122,6 +124,8 @@ type ViewerConfig = {
     description?: string;
     /** @default null */
     downloadUrl?: string;
+    /** @default null */
+    downloadName?: string;
     /** @default null */
     loadingImg?: string;
     /** @default 'Loading...' */
@@ -136,10 +140,6 @@ type ViewerConfig = {
     maxFov?: number;
     /** @default 50 */
     defaultZoomLvl?: number;
-    /** @deprecated use `defaultYaw` */
-    defaultLong?: number;
-    /** @deprecated use `defaultPitch` */
-    defaultLat?: number;
     /** @default 0 */
     defaultYaw?: number | string;
     /** @default 0 */
@@ -150,16 +150,6 @@ type ViewerConfig = {
     moveSpeed?: number;
     /** @default 1 */
     zoomSpeed?: number;
-    /** @deprecated use the 'autorotate' plugin */
-    autorotateDelay?: number | null;
-    /** @deprecated use the 'autorotate' plugin */
-    autorotateIdle?: boolean;
-    /** @deprecated use the 'autorotate' plugin */
-    autorotateSpeed?: string | number;
-    /** @deprecated use the 'autorotate' plugin */
-    autorotateLat?: number;
-    /** @deprecated use the 'autorotate' plugin */
-    autorotateZoomLvl?: number;
     /** @default true */
     moveInertia?: boolean;
     /** @default true */
@@ -170,15 +160,17 @@ type ViewerConfig = {
     mousewheelCtrlKey?: boolean;
     /** @default false */
     touchmoveTwoFingers?: boolean;
-    /** @default true */
+    /** @deprecated configure `useXmpData` on EquirectangularAdapter */
     useXmpData?: boolean;
     panoData?: PanoData | PanoDataProvider;
     requestHeaders?: Record<string, string> | ((url: string) => Record<string, string>);
-    /** @default '#000' */
+    /** @deprecated configure `backgroundColor` on EquirectangularAdapter */
     canvasBackground?: string;
+    /** @default '{ alpha: true, antialias: true }' */
+    rendererParameters?: WebGLRendererParameters;
     /** @default false */
     withCredentials?: boolean;
-    /** @default 'autorotate zoom move download description caption fullscreen' */
+    /** @default 'zoom move download description caption fullscreen' */
     navbar?: boolean | string | Array<string | NavbarCustomButton>;
     lang?: {
         zoom: string;
@@ -195,9 +187,12 @@ type ViewerConfig = {
         twoFingers: string;
         ctrlZoom: string;
         loadError: string;
+        littlePlanetButton: string;
+        littlePlanetIcon: string;
         [K: string]: string;
     };
-    keyboard?: boolean | Record<string, ACTIONS>;
+    keyboard?: boolean | 'always' | 'fullscreen' | Record<string, ACTIONS | ((viewer: Viewer) => void)>;
+    keyboardActions?: Record<string, ACTIONS | ((viewer: Viewer) => void)>;
 };
 ```
 > This code is generated from the original library. Click [here](http://photo-sphere-viewer.js.org/guide/config.html) to see documentation.
@@ -358,32 +353,41 @@ And then:
 <ReactPhotoSphereViewer ref={photoSphereRef} src="Test_Pano.jpg"></ReactPhotoSphereViewer>
 ```
 Currently managed methods are:
- - animate(options: AnimateOptions)
- - destroy()
- - rotate(options: { x: number, y: number })
- - setOption(option: keyof ViewerOptions, value: any)
- - setOptions(options: ViewerOptions)
- - zoom(value: number)
- - zoomIn()
- - zoomOut()
- - resize(size: CssSize)
- - enterFullscreen()
- - exitFullscreen()
- - toggleFullscreen()
- - isFullscreenEnabled()
- - getPlugin(pluginName: string)
- - getPosition()
- - getZoomLevel()
- - getSize()
- - needsUpdate()
- - autoSize()
- - setPanorama(path: string, options?: object)
- - setOverlay(path: string, opacity?: number)
- - toggleAutorotate()
- - showError(message: string)
- - hideError()
- - startKeyboardControl()
- - stopKeyboardControl()
+ - animate(options: AnimateOptions): utils.Animation<any>;
+ - destroy(): void;
+ - createTooltip(config: TooltipConfig): Tooltip;
+ - needsContinuousUpdate(enabled: boolean): void;
+ - observeObjects(userDataKey: string): void;
+ - unobserveObjects(userDataKey: string): void;
+ - setCursor(cursor: string): void;
+ - stopAnimation(): PromiseLike<any>;
+ - rotate(position: ExtendedPosition): void;
+ - setOption(option: keyof UpdatableViewerConfig, value: unknown): void;
+ - setOptions(options: Partial<UpdatableViewerConfig>): void;
+ - getCurrentNavbar(): (string | object)[] | void;
+ - zoom(value: number): void;
+ - zoomIn(step: number): void;
+ - zoomOut(step: number): void;
+ - resize(size: CssSize): void;
+ - enterFullscreen(): void;
+ - exitFullscreen(): void;
+ - toggleFullscreen(): void;
+ - isFullscreenEnabled(): boolean | void;
+ - startAutoRotate(): void;
+ - stopAutoRotate(): void;
+ - getPlugin<T>(pluginId: string | PluginConstructor): T;
+ - getPosition(): Position; // Specify the return type
+ - getZoomLevel(): number; // Specify the return type
+ - getSize(): Size; // Specify the return type
+ - needsUpdate(): void;
+ - autoSize(): void;
+ - setPanorama(path: any, options?: PanoramaOptions): Promise<boolean>;
+ - setOverlay(path: any, opacity?: number): Promise<void>;
+ - toggleAutorotate(): void;
+ - showError(message: string): void;
+ - hideError(): void;
+ - startKeyboardControl(): void;
+ - stopKeyboardControl(): void;
 
 > To see the original methods, click [here](http://photo-sphere-viewer.js.org/guide/methods.html).
 
