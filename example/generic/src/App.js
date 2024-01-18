@@ -71,6 +71,10 @@ function App() {
         ref={photoSphereRef}
         src="Test_pano.jpg"
         littlePlanet={true}
+        lang={{
+          littlePlanetButton: "Little Planet",
+        }}
+        hideNavbarButton={true}
         height={'100vh'}
         width={"100%"}
         onClick={handleClick}
