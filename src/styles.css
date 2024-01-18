@@ -3,3 +3,36 @@
     position: relative;
     overflow: hidden;
 }
+
+.showNavbarButton {
+    display: flex;
+    position: absolute;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 1000;
+
+    background: rgba(0, 0, 0, 0.09);
+    bottom: 10px;
+    height: 30px;
+    width: 30px;
+    right: 10px;
+
+    transition: background 0.2s ease, color 0.2s ease;
+    
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+}
+
+.hideNavbarButton svg {
+    width: 100%;
+    transform: scale(1);
+    transition: transform .2s ease;
+    vertical-align: initial;
+    margin-top: -2;
+
+    &:hover {
+        transform: scale(1.2);
+    }
+}
