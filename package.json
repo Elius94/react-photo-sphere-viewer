@@ -1,6 +1,6 @@
 {
     "name": "react-photo-sphere-viewer",
-    "version": "4.2.1-psv5.6.0",
+    "version": "4.2.3-psv5.6.0",
     "description": "Photosphere Viewer for React.JS, wrapper of photo-sphere-viewer.js",
     "author": "Elius94",
     "license": "MIT",
