@@ -9,8 +9,8 @@ npm install react-photo-sphere-viewer
 ```
 
 ## Library Version
-Original Wrapped Library: [PhotoSphereViewer](https://github.com/mistic100/Photo-Sphere-Viewer) Version: 5.5.2 [<font color="green">**NEW**</font>]
-Now the component version is composed by the semantic version of the wrapper and the version of the original library. For example, the current version is 4.1.0-psv5.5.2. This means that the wrapper is in version 4.1.0 and the original library [psv](https://github.com/mistic100/Photo-Sphere-Viewer) is in version 5.5.2.
+Original Wrapped Library: [PhotoSphereViewer](https://github.com/mistic100/Photo-Sphere-Viewer) Version: 5.6.0 [<font color="green">**NEW**</font>]
+Now the component version is composed by the semantic version of the wrapper and the version of the original library. For example, the current version is 4.2.0-psv5.6.0. This means that the wrapper is in version 4.2.0 and the original library [psv](https://github.com/mistic100/Photo-Sphere-Viewer) is in version 5.6.0.
 
 ## Description
 
@@ -382,7 +382,6 @@ Currently managed methods are:
  - needsUpdate(): void;
  - autoSize(): void;
  - setPanorama(path: any, options?: PanoramaOptions): Promise<boolean>;
- - setOverlay(path: any, opacity?: number): Promise<void>;
  - toggleAutorotate(): void;
  - showError(message: string): void;
  - hideError(): void;

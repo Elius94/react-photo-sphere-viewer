@@ -208,7 +208,6 @@ function useDomElement(): [HTMLDivElement | undefined, (r: HTMLDivElement) => vo
  * @property {Function} needsUpdate - Updates the viewer.
  * @property {Function} autoSize - Sets the size to auto.
  * @property {Function} setPanorama - Sets the panorama. Receives a path and an optional PanoramaOptions object. Returns a Promise.
- * @property {Function} setOverlay - Sets the overlay. Receives a path and an optional opacity. Returns a Promise.
  * @property {Function} toggleAutorotate - Toggles auto-rotation.
  * @property {Function} showError - Shows an error message. Receives a string.
  * @property {Function} hideError - Hides the error message.
@@ -248,8 +247,6 @@ export interface ViewerAPI {
     autoSize(): void;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setPanorama(path: any, options?: PanoramaOptions): Promise<boolean>;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    setOverlay(path: any, opacity?: number): Promise<void>;
     toggleAutorotate(): void;
     showError(message: string): void;
     hideError(): void;
@@ -629,10 +626,6 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         setPanorama(path: any, options?: PanoramaOptions): Promise<boolean> {
             return spherePlayerInstance.current?.setPanorama(path, options) as Promise<boolean>
-        },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        setOverlay(path: any, opacity?: number): Promise<void> {
-            return spherePlayerInstance.current?.setOverlay(path, opacity) as Promise<void>
         },
         toggleAutorotate() {
             Emitter.emit("toggleAutorotate", {})
