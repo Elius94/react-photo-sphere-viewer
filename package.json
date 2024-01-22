@@ -1,6 +1,6 @@
 {
     "name": "react-photo-sphere-viewer",
-    "version": "4.2.0-psv5.6.0",
+    "version": "4.2.1-psv5.6.0",
     "description": "Photosphere Viewer for React.JS, wrapper of photo-sphere-viewer.js",
     "author": "Elius94",
     "license": "MIT",
@@ -55,7 +55,7 @@
         "@photo-sphere-viewer/visible-range-plugin": "^5.6.0",
         "autoprefixer": "^10.4.17",
         "eventemitter3": "^5.0.1",
-        "photo-sphere-viewer-lensflare-plugin": "^2.0.1"
+        "photo-sphere-viewer-lensflare-plugin": "^2.1.2"
     },
     "peerDepenbabel-coredencies": {
         "prop-types": "^15.5.4",
