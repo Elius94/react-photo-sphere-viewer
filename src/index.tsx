@@ -488,9 +488,13 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
                     _currentNavbar.push(hideNavbarButton)
                 }
             }
-            
-            _c.setOption("navbar", _currentNavbar)
-            setCurrentNavbar(_currentNavbar as (string | object)[])
+
+            if (_currentNavbar !== false) {
+                _c.setOption("navbar", _currentNavbar)
+                setCurrentNavbar(_currentNavbar as (string | object)[])
+            } else {
+                _c.navbar.hide()
+            }
 
             Emitter.on("animate", (options: AnimateOptions) => {
                 _c.animate(options)
