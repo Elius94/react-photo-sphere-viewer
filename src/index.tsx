@@ -105,7 +105,6 @@ export interface Props extends MakeOptional<ViewerConfig, "container"> {
 }
 
 const defaultNavbar = [
-    "autorotate",
     "zoom",
     "fullscreen"
 ]
@@ -172,8 +171,6 @@ function useDomElement(): [HTMLDivElement | undefined, (r: HTMLDivElement) => vo
  * @property {Function} exitFullscreen - Exits fullscreen mode.
  * @property {Function} toggleFullscreen - Toggles fullscreen mode.
  * @property {Function} isFullscreenEnabled - Returns whether fullscreen is enabled.
- * @property {Function} startAutoRotate - Starts auto-rotation.
- * @property {Function} stopAutoRotate - Stops auto-rotation.
  * @property {Function} getPlugin - Returns a plugin. Receives a plugin ID or a PluginConstructor.
  * @property {Function} getPosition - Returns the current position.
  * @property {Function} getZoomLevel - Returns the current zoom level.
@@ -181,7 +178,6 @@ function useDomElement(): [HTMLDivElement | undefined, (r: HTMLDivElement) => vo
  * @property {Function} needsUpdate - Updates the viewer.
  * @property {Function} autoSize - Sets the size to auto.
  * @property {Function} setPanorama - Sets the panorama. Receives a path and an optional PanoramaOptions object. Returns a Promise.
- * @property {Function} toggleAutorotate - Toggles auto-rotation.
  * @property {Function} showError - Shows an error message. Receives a string.
  * @property {Function} hideError - Hides the error message.
  * @property {Function} startKeyboardControl - Starts keyboard control.
@@ -210,8 +206,6 @@ export interface ViewerAPI {
     exitFullscreen(): void;
     toggleFullscreen(): void;
     isFullscreenEnabled(): boolean | void;
-    startAutoRotate(): void;
-    stopAutoRotate(): void;
     getPlugin<T>(pluginId: string | PluginConstructor): T;
     getPosition(): Position; // Specify the return type
     getZoomLevel(): number; // Specify the return type
@@ -220,7 +214,6 @@ export interface ViewerAPI {
     autoSize(): void;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setPanorama(path: any, options?: PanoramaOptions): Promise<boolean>;
-    toggleAutorotate(): void;
     showError(message: string): void;
     hideError(): void;
     startKeyboardControl(): void;
@@ -555,12 +548,6 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
         isFullscreenEnabled() {
             return spherePlayerInstance.current?.isFullscreenEnabled()
         },
-        startAutoRotate() {
-            Emitter.emit("startAutoRotate", {})
-        },
-        stopAutoRotate() {
-            Emitter.emit("stopAutoRotate", {})
-        },
         getPlugin<T>(pluginId: string | PluginConstructor): T {
             return spherePlayerInstance.current?.getPlugin(pluginId) as T
         },
@@ -582,9 +569,6 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         setPanorama(path: any, options?: PanoramaOptions): Promise<boolean> {
             return spherePlayerInstance.current?.setPanorama(path, options) as Promise<boolean>
-        },
-        toggleAutorotate() {
-            Emitter.emit("toggleAutorotate", {})
         },
         showError(message: string) {
             return spherePlayerInstance.current?.showError(message)
