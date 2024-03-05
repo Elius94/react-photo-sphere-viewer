@@ -28,7 +28,7 @@ Addictional features are:
  - Little Planet Mode: display the panorama like a little planet (Similar to the DJI drones exported panoramas)
 
  ## Demo
- [Enjoy it in this sandbox](https://codesandbox.io/p/devbox/react-photo-sphere-viewer-playground-z2xcr3)
+ [Enjoy it in this sandbox](https://codesandbox.io/p/sandbox/react-photo-sphere-viewer-playground-zd8nt8)
 
 ## Usage
 
