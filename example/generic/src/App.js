@@ -1,6 +1,10 @@
 import './App.css';
-import { ReactPhotoSphereViewer, MarkersPlugin, LensflarePlugin } from 'react-photo-sphere-viewer';
+import { MarkersPlugin } from '@photo-sphere-viewer/markers-plugin';
+import { ReactPhotoSphereViewer, LensflarePlugin } from 'react-photo-sphere-viewer';
+import { PlanPlugin } from '@photo-sphere-viewer/plan-plugin';
+import { TileLayer } from 'leaflet';
 import React from 'react';
+import "@photo-sphere-viewer/plan-plugin/index.css"
 
 function App() {
   const photoSphereRef = React.useRef();
@@ -26,6 +30,34 @@ function App() {
 
   const plugins = [
     [
+      [PlanPlugin, {
+        defaultZoom: 14,
+        coordinates: [6.78677, 44.58241],
+        bearing: '120deg',
+        layers: [
+          {
+            name: 'OpenStreetMap',
+            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            attribution: '&copy; OpenStreetMap',
+          },
+          {
+            name: 'OpenTopoMap',
+            layer: new TileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+              subdomains: ['a', 'b', 'c'],
+              maxZoom: 17,
+            }),
+            attribution: '&copy; OpenTopoMap',
+          },
+        ],
+        hotspots: [
+          {
+            coordinates: [6.7783, 44.58506],
+            id: 'green-lake',
+            tooltip: 'Lac vert',
+            color: 'green',
+          },
+        ],
+      }],
       MarkersPlugin,
       {
         // list of markers

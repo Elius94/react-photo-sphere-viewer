@@ -1,9 +1,11 @@
 import {
   ReactPhotoSphereViewer,
-  VirtualTourPlugin,
-  GalleryPlugin,
-  MarkersPlugin
 } from "react-photo-sphere-viewer";
+import { VirtualTourPlugin } from "@photo-sphere-viewer/virtual-tour-plugin";
+import { MarkersPlugin } from "@photo-sphere-viewer/markers-plugin";
+import { GalleryPlugin } from "@photo-sphere-viewer/gallery-plugin";
+import "@photo-sphere-viewer/virtual-tour-plugin/index.css";
+import "@photo-sphere-viewer/gallery-plugin/index.css";
 import React from "react";
 
 const baseUrl = "https://photo-sphere-viewer-data.netlify.app/assets/";
@@ -129,7 +131,7 @@ function App() {
         touchmoveTwoFingers={true}
         mousewheelCtrlKey={true}
         defaultYaw={"130deg"}
-        navbar={["zoom", "move", "download", "description", "caption", "fullscreen"]}
+        navbar={["zoom", "move", "gallery", "download", "description", "caption", "fullscreen"]}
         height={"100vh"}
         width={"100%"}
         hideNavbarButton={true}

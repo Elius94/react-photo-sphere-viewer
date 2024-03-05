@@ -5,6 +5,7 @@ import resolve from "@rollup/plugin-node-resolve"
 import url from "@rollup/plugin-url"
 import svgr from "@svgr/rollup"
 import babel, { getBabelOutputPlugin } from "@rollup/plugin-babel"
+import peerDepsExternal from "rollup-plugin-peer-deps-external"
 
 export default [{
     input: [
@@ -21,6 +22,7 @@ export default [{
         }
     ],
     plugins: [
+        peerDepsExternal(),
         resolve(),
         postcss({
             modules: false
@@ -35,7 +37,7 @@ export default [{
         }),
         babel({ exclude: "node_modules/**", presets: ["@babel/preset-react"], babelHelpers: "bundled" }),
         getBabelOutputPlugin({
-            presets: ["@babel/preset-react","@babel/preset-env"],
+            presets: ["@babel/preset-react", "@babel/preset-env"],
             plugins: [["babel-plugin-styled-components", { displayName: true }]],
         }),
     ],

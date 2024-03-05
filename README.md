@@ -5,12 +5,15 @@
 
 
 ```bash
-npm install react-photo-sphere-viewer
+npm install @photo-sphere-viewer/core react-photo-sphere-viewer
 ```
 
+> [!IMPORTANT]
+> Since v5.0.0-psv5.7.1, to use `<ReactPhotoSphereViewer />` you have to manually install the JS library `@photo-sphere-viewer/core`. This is a breaking change. The library is not included in the package anymore. You can install it using the command `npm install @photo-sphere-viewer/core` or `yarn add @photo-sphere-viewer/core`. I decided to remove the library from the package to reduce the size of the package and to avoid the need to update the package every time the original library is updated. In particular, from now on, to use a plugin or an adapter, you need to import it directly from the package. For example, to use the `MarkersPlugin` you need to import it from the package `import { MarkersPlugin } from '@photo-sphere-viewer/markers-plugin'`.
+
 ## Library Version
-Original Wrapped Library: [PhotoSphereViewer](https://github.com/mistic100/Photo-Sphere-Viewer) Version: 5.6.0 [<font color="green">**NEW**</font>]
-Now the component version is composed by the semantic version of the wrapper and the version of the original library. For example, the current version is 4.2.1-psv5.6.0. This means that the wrapper is in version 4.2.1 and the original library [psv](https://github.com/mistic100/Photo-Sphere-Viewer) is in version 5.6.0.
+Original Wrapped Library: [PhotoSphereViewer](https://github.com/mistic100/Photo-Sphere-Viewer) Version: 5.7.1 [<font color="green">**NEW**</font>]
+Now the component version is composed by the semantic version of the wrapper and the version of the original library. For example, the current version is 5.0.0-psv5.7.1. This means that the wrapper is in version 5.0.0 and the original library [psv](https://github.com/mistic100/Photo-Sphere-Viewer) is in version 5.7.1.
 
 ## Description
 
@@ -198,15 +201,23 @@ type ViewerConfig = {
 > This code is generated from the original library. Click [here](http://photo-sphere-viewer.js.org/guide/config.html) to see documentation.
 
 ### Plugins
-To use the standard plugins provided by the original library, you need to pass the `plugins` prop to the component. The prop is an array of plugins. Each plugin can be a constructor or an array of constructor and options. To include them in the component, you need to import them directly from the "react-photo-sphere-viewer" package.
+To use the standard plugins provided by the original library, you need to pass the `plugins` prop to the component. The prop is an array of plugins. Each plugin can be a constructor or an array of constructor and options. To include them in the component, you need to import them directly from the "@photo-sphere-viewer/" package.
 
-> The only "third-party" plugin that is supported is the "Lensflare" plugin. To use it, you need to import it from the "react-photo-sphere-viewer" package.
+> The only "third-party" plugin that is supported is the "Lensflare" plugin. To use it, you need to import it from the "react-photo-sphere-viewer" package, not from the original. That's because the plugin is made by me and it is not included in the original library.
 
 ```jsx
-import { ReactPhotoSphereViewer, CompassPlugin, MarkersPlugin } from 'react-photo-sphere-viewer';
+import { ReactPhotoSphereViewer, LensflarePlugin } from 'react-photo-sphere-viewer';
+import { CompassPlugin } from '@photo-sphere-viewer/compass-plugin';
+import { MarkersPlugin } from '@photo-sphere-viewer/markers-plugin';
 
 function App() {
   const plugins = [
+    [LensflarePlugin, {
+      position: { pitch: 0, yaw: 0 },
+      src: 'lensflare.png',
+      width: 1000,
+      height: 1000,
+    }],
     [CompassPlugin, {
       hotspots: [
         { longitude: '0deg' },
@@ -292,7 +303,7 @@ To use the standard library adapters provided by the original library, you need 
 
 ```jsx
 
-import { CubemapAdapter, CubemapAdapterOptions } from 'react-photo-sphere-viewer';
+import { CubemapAdapter, CubemapAdapterOptions } from '@photo-sphere-viewer/cubemap-adapter';
 ```
 
 > Click [here](https://photo-sphere-viewer.js.org/guide/adapters/) to see adapters documentation.

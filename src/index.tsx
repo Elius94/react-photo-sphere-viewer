@@ -10,43 +10,18 @@ import {
     events,
     PluginConstructor,
     NavbarCustomButton,
-    AbstractAdapter,
-    AbstractPlugin,
     TooltipConfig,
     Tooltip,
     Position,
     Size,
     PanoramaOptions,
-} from "@photo-sphere-viewer/core"
-import { utils } from "@photo-sphere-viewer/core"
+    utils
+} from "@photo-sphere-viewer/core" // Peer dependency
 import "./styles.css"
 import "@photo-sphere-viewer/core/index.css"
-import { AutorotatePlugin, AutorotatePluginConfig } from "@photo-sphere-viewer/autorotate-plugin"
-import { MarkersPlugin, MarkersPluginConfig } from "@photo-sphere-viewer/markers-plugin"
-import { CompassPlugin, CompassPluginConfig } from "@photo-sphere-viewer/compass-plugin"
-import { GalleryPlugin, GalleryPluginConfig } from "@photo-sphere-viewer/gallery-plugin"
-import { GyroscopePlugin, GyroscopePluginConfig } from "@photo-sphere-viewer/gyroscope-plugin"
-import { ResolutionPlugin, ResolutionPluginConfig } from "@photo-sphere-viewer/resolution-plugin"
-import { SettingsPlugin, SettingsPluginConfig } from "@photo-sphere-viewer/settings-plugin"
-import { StereoPlugin } from "@photo-sphere-viewer/stereo-plugin"
-import { VideoPlugin, VideoPluginConfig } from "@photo-sphere-viewer/video-plugin"
-import { VirtualTourPlugin, VirtualTourPluginConfig } from "@photo-sphere-viewer/virtual-tour-plugin"
-import { VisibleRangePlugin, VisibleRangePluginConfig } from "@photo-sphere-viewer/visible-range-plugin"
-import { MapPlugin, MapPluginConfig } from "@photo-sphere-viewer/map-plugin"
-import { CubemapAdapter, CubemapAdapterConfig } from "@photo-sphere-viewer/cubemap-adapter"
-import { CubemapTilesAdapter, CubemapTilesAdapterConfig } from "@photo-sphere-viewer/cubemap-tiles-adapter"
-import { CubemapVideoAdapter, CubemapVideoAdapterConfig } from "@photo-sphere-viewer/cubemap-video-adapter"
-import { EquirectangularTilesAdapter, EquirectangularTilesAdapterConfig } from "@photo-sphere-viewer/equirectangular-tiles-adapter"
-import { EquirectangularVideoAdapter, EquirectangularVideoAdapterConfig } from "@photo-sphere-viewer/equirectangular-video-adapter"
 import { LensflarePlugin } from "photo-sphere-viewer-lensflare-plugin"
 
 import "@photo-sphere-viewer/markers-plugin/index.css"
-import "@photo-sphere-viewer/compass-plugin/index.css"
-import "@photo-sphere-viewer/gallery-plugin/index.css"
-import "@photo-sphere-viewer/settings-plugin/index.css"
-import "@photo-sphere-viewer/video-plugin/index.css"
-import "@photo-sphere-viewer/virtual-tour-plugin/index.css"
-import "@photo-sphere-viewer/map-plugin/index.css"
 
 import EventEmitter from "eventemitter3"
 
@@ -348,14 +323,6 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
                 lang: options.lang || {} as keyof Props["lang"],
                 keyboard: options.keyboard || "fullscreen",
                 plugins: [
-                    [
-                        AutorotatePlugin,
-                        {
-                            autorotatePitch: "5deg",
-                            autostartDelay: undefined,
-                            autostartOnIdle: false
-                        }
-                    ],
                     ...(options.plugins ? options.plugins as PluginConstructor[] : [])
                 ],
             })
@@ -385,8 +352,6 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
                             speed: "10rpm",
                         }).then(() => {
                             // Disable Little Planet.
-                            const p = _c.getPlugin("autorotate") as AutorotatePlugin
-                            if (p) p.start()
                             _c.setOption("maxFov", options.maxFov || 70)
                             _c.setOption("mousewheel", options.mousewheel ?? true)
                         })
@@ -421,8 +386,6 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
                     className: "resetLittlePlanetButton",
                     onClick: () => {
                         littlePlanetEnabled = true
-                        const p = _c.getPlugin("autorotate") as AutorotatePlugin
-                        if (p) p.stop()
                         _c.setOption("maxFov", LITTLEPLANET_MAX_ZOOM)
                         //_c.setOption("fisheye", LITTLEPLANET_FISHEYE) // @ts-ignore ts(2345)
                         _c.setOption("mousewheel", false)
@@ -513,15 +476,6 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
                 _c.zoomIn(step)
             }).on("zoomOut", (step: number) => {
                 _c.zoomOut(step)
-            }).on("startAutoRotate", () => {
-                const p = _c.getPlugin("autorotate") as AutorotatePlugin
-                if (p) p.start()
-            }).on("stopAutoRotate", () => {
-                const p = _c.getPlugin("autorotate") as AutorotatePlugin
-                if (p) p.stop()
-            }).on("toggleAutorotate", () => {
-                const p = _c.getPlugin("autorotate") as AutorotatePlugin
-                if (p) p.toggle()
             }).on("needsContinuousUpdate", (enabled: boolean) => {
                 _c.needsContinuousUpdate(enabled)
             }).on("observeObjects", (userDataKey: string) => {
@@ -660,23 +614,5 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
 
 export {
     ReactPhotoSphereViewer,
-    AutorotatePlugin, AutorotatePluginConfig,
-    MarkersPlugin, MarkersPluginConfig,
-    CompassPlugin, CompassPluginConfig,
-    GalleryPlugin, GalleryPluginConfig,
-    GyroscopePlugin, GyroscopePluginConfig,
-    ResolutionPlugin, ResolutionPluginConfig,
-    SettingsPlugin, SettingsPluginConfig,
-    StereoPlugin,
-    VideoPlugin, VideoPluginConfig,
-    VirtualTourPlugin, VirtualTourPluginConfig,
-    VisibleRangePlugin, VisibleRangePluginConfig,
-    MapPlugin, MapPluginConfig,
-    CubemapAdapter, CubemapAdapterConfig,
-    CubemapTilesAdapter, CubemapTilesAdapterConfig,
-    CubemapVideoAdapter, CubemapVideoAdapterConfig,
-    EquirectangularTilesAdapter, EquirectangularTilesAdapterConfig,
-    EquirectangularVideoAdapter, EquirectangularVideoAdapterConfig,
-    AbstractPlugin, AbstractAdapter,
     LensflarePlugin
 }
