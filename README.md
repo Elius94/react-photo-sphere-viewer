@@ -32,7 +32,7 @@ Addictional features are:
 
 ## Usage
 
-* Using React
+### Using React
 ```jsx
 import './App.css';
 import { ReactPhotoSphereViewer } from 'react-photo-sphere-viewer';
@@ -49,34 +49,171 @@ function App() {
 export default App;
 ```
 
-* Using Next.js
+### Using Next.js
+
+<details>
+  <summary>With App Router</summary>
+    
 ```jsx
-import './App.css';
-import React, { useEffect, useRef } from 'react';
-import dynamic from 'next/dynamic';
+// # app/page.js
 
-// import { ReactPhotoSphereViewer } from 'react-photo-sphere-viewer';
-const ReactPhotoSphereViewer = dynamic(
-  () =>
-    import('react-photo-sphere-viewer').then(
-      (mod) => mod.ReactPhotoSphereViewer
-    ),
-  {
-    ssr: false,
-  }
-);
+"use client"
 
-export default function Home() {  
+import React from "react";
+import { ReactPhotoSphereViewer } from "react-photo-sphere-viewer";
+
+// Import plugins
+import { MarkersPlugin } from '@photo-sphere-viewer/markers-plugin';
+import { CompassPlugin } from '@photo-sphere-viewer/compass-plugin';
+
+// Import plugins stylesheets
+import '@photo-sphere-viewer/markers-plugin/index.css';
+import '@photo-sphere-viewer/compass-plugin/index.css';
+
+export default function Home() {
+  const imgSrc = 'https://photo-sphere-viewer-data.netlify.app/assets/sphere.jpg'
+  const plugins = [
+    [MarkersPlugin,
+      {
+        markers: [
+          {
+            id: "image",
+            position: { yaw: "0.33deg", pitch: "0.1deg" },
+            image: "vercel.svg",
+            anchor: "bottom center",
+            size: { width: 128, height: 128 },
+            tooltip: "Marker Tooltip Test",
+          },
+        ],
+      },],
+    [CompassPlugin, {
+      hotspots: [
+        { yaw: '0deg' },
+        { yaw: '90deg' },
+        { yaw: '180deg' },
+        { yaw: '270deg' },
+      ],
+    }]
+  ]
+
   return (
-    <div className="App">
-      <ReactPhotoSphereViewer src="Test_Pano.jpg" height={'100vh'} width={"100%"}></ReactPhotoSphereViewer>
-    </div>
+    <div>
+	  <ReactPhotoSphereViewer
+		  src={imgSrc}
+		  height={"100vh"}
+		  width={"100%"}
+		  plugins={plugins}
+	  ></ReactPhotoSphereViewer>
+	</div>
   );
 }
 ```
+</details>
+
+<br />
 
 > [!IMPORTANT]
-> To use `<ReactPhotoSphereViewer />` in Next.js with App Router, make sure to include [`"use client"`](https://nextjs.org/docs/app/building-your-application/rendering/client-components#using-client-components-in-nextjs) in your component embedding the viewer. Refer to the [documentation](https://nextjs.org/docs/app/building-your-application/rendering/client-components#using-client-components-in-nextjs) for more details.
+> To use `<ReactPhotoSphereViewer />` in Next.js with [Page Router](https://nextjs.org/docs/pages), you'll need to use some work-arounds in order to import correctly the CSS modules. Otherwise you will encounter the `CSS Modules cannot be imported from within node_modules` error. See more [here](https://nextjs.org/docs/messages/css-npm).
+
+<details>
+  <summary>With Page Router</summary>
+
+  1. Install [`next-transpile-modules`](https://www.npmjs.com/package/next-transpile-modules)
+  ```bash
+  $ npm install --save-dev next-transpile-modules
+  ```
+  2. Update your `next.config.js` as shown below:
+  ```js
+  // # next.config.js
+
+  const withTM = require('next-transpile-modules')([
+
+    // Add this 2 modules
+    '@photo-sphere-viewer/core',
+    'react-photo-sphere-viewer'
+    
+  ]);
+
+  /** @type {import('next').NextConfig} */
+  const nextConfig = {
+    reactStrictMode: true
+  };
+  module.exports = withTM(nextConfig);
+  ```
+  3. Import the CSS manually into `_app.js`:
+  ```js
+  // # pages/_app.js
+
+  import "@/styles/globals.css";
+
+  // Import plugins stylesheets
+  import '@photo-sphere-viewer/markers-plugin/index.css'
+  import '@photo-sphere-viewer/compass-plugin/index.css'
+
+
+  export default function App({ Component, pageProps }) {
+    return <Component {...pageProps} />;
+  }
+  ```
+  4. Import dynamicly `react-photo-sphere-viewer` and import the plugins manually:  
+  ```jsx
+  // # pages/index.js
+
+  import dynamic from 'next/dynamic';
+  const ReactPhotoSphereViewer = dynamic(
+    () =>
+      import('react-photo-sphere-viewer').then(
+        (mod) => mod.ReactPhotoSphereViewer
+      ),
+    {
+      ssr: false,
+    }
+  );
+
+  // Import plugins
+  import { MarkersPlugin } from '@photo-sphere-viewer/markers-plugin';
+  import { CompassPlugin } from '@photo-sphere-viewer/compass-plugin';
+
+
+  export default function Home() {
+    const imgSrc = 'https://photo-sphere-viewer-data.netlify.app/assets/sphere.jpg';
+    const plugins = [
+      [MarkersPlugin,
+        {
+          markers: [
+            {
+              id: "image",
+              position: { yaw: "0.33deg", pitch: "0.1deg" },
+              image: "vercel.svg",
+              anchor: "bottom center",
+              size: { width: 128, height: 128 },
+              tooltip: "Marker Tooltip Test",
+            },
+          ],
+        },],
+      [CompassPlugin, {
+        hotspots: [
+          { yaw: '0deg' },
+          { yaw: '90deg' },
+          { yaw: '180deg' },
+          { yaw: '270deg' },
+        ],
+      }]
+    ];
+
+    return (
+      <div>
+        <ReactPhotoSphereViewer
+          src={imgSrc}
+          height={"100vh"}
+          width={"100%"}
+          plugins={plugins}
+        ></ReactPhotoSphereViewer>
+      </div>
+    );
+  }
+  ```
+</details>
 
 ## Little planet mode
 
@@ -220,10 +357,10 @@ function App() {
     }],
     [CompassPlugin, {
       hotspots: [
-        { longitude: '0deg' },
-        { longitude: '90deg' },
-        { longitude: '180deg' },
-        { longitude: '270deg' },
+        { yaw: '0deg' },
+        { yaw: '90deg' },
+        { yaw: '180deg' },
+        { yaw: '270deg' },
       ],
     }],
     [MarkersPlugin, {
