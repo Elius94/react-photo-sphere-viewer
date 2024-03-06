@@ -142,6 +142,8 @@ export default function Home() {
   ```
   3. Import the CSS manually into `_app.js`:
   ```js
+  // # pages/_app.js
+
   import "@/styles/globals.css";
 
   // Import plugins stylesheets
