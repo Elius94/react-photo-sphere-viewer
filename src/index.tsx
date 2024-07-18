@@ -16,10 +16,11 @@ import {
     Size,
     PanoramaOptions,
     utils
+    /* @ts-ignore next line */
 } from "@photo-sphere-viewer/core" // Peer dependency
 import "./styles.css"
 import "@photo-sphere-viewer/core/index.css"
-import { LensflarePlugin } from "photo-sphere-viewer-lensflare-plugin"
+// import { LensflarePlugin } from "photo-sphere-viewer-lensflare-plugin"
 
 import EventEmitter from "eventemitter3"
 
@@ -252,12 +253,20 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
             props.withCredentials,
             props.keyboard,
             props.plugins,
+            props.adapter,
             props.sphereCorrection,
             props.minFov,
             props.maxFov,
             props.defaultZoomLvl,
             props.defaultYaw,
             props.defaultPitch,
+            props.caption,
+            props.description,
+            props.downloadUrl,
+            props.downloadName,
+            props.loadingImg,
+            props.loadingTxt,
+            props.rendererParameters,
         ]
     )
     const spherePlayerInstance = useRef<Viewer | null>(null)
@@ -392,7 +401,7 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
                     _currentNavbar.splice(1, 0, resetLittlePlanetButton)
                 }
             }
-            
+
             if (options.hideNavbarButton) {
                 // add toggle navbar visibility button
                 const hideNavbarButton = {
@@ -432,7 +441,7 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
                             _c.navbar.show()
                             btn.remove()
                         }
-    
+
                         // add the button to the viewer container
                         document.body.appendChild(btn)
                     },
@@ -482,8 +491,8 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
     }, [sphereElement, options])
 
     useEffect(() => {
-        if (spherePlayerInstance.current) {
-            spherePlayerInstance.current.setPanorama(options.src, options)
+        if (spherePlayerInstance.current && options.src) {
+            spherePlayerInstance.current.setPanorama(options.src, {})
         }
     }, [options.src])
 
@@ -595,6 +604,5 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
 })
 
 export {
-    ReactPhotoSphereViewer,
-    LensflarePlugin
+    ReactPhotoSphereViewer
 }

@@ -1,12 +1,19 @@
 import './App.css';
 import { MarkersPlugin } from '@photo-sphere-viewer/markers-plugin';
-import { ReactPhotoSphereViewer, LensflarePlugin } from 'react-photo-sphere-viewer';
+import { ReactPhotoSphereViewer } from 'react-photo-sphere-viewer';
+import { LensflarePlugin } from 'photo-sphere-viewer-lensflare-plugin';
 import { PlanPlugin } from '@photo-sphere-viewer/plan-plugin';
 import { TileLayer } from 'leaflet';
 import React from 'react';
 import "@photo-sphere-viewer/plan-plugin/index.css"
 
+const PANOS = [
+  "https://srv.eliusoutdoor.com/ws/api/immersive/images/?n=gran-sasso-1&t=p",
+  "https://srv.eliusoutdoor.com/ws/api/immersive/images/?n=mondeval&t=p"
+];
+
 function App() {
+  const [panoIndex, setPanoIndex] = React.useState(0);
   const photoSphereRef = React.useRef();
 
   const handleClick = (instance) => {
@@ -30,7 +37,7 @@ function App() {
 
   const plugins = [
     [
-      [PlanPlugin, {
+      PlanPlugin, {
         defaultZoom: 14,
         coordinates: [6.78677, 44.58241],
         bearing: '120deg',
@@ -57,7 +64,9 @@ function App() {
             color: 'green',
           },
         ],
-      }],
+      }
+    ],
+    [
       MarkersPlugin,
       {
         // list of markers
@@ -94,25 +103,29 @@ function App() {
           }
         ]
       }
-    ]
+    ],
+
   ];
 
   return (
-    <div className="App">
-      <ReactPhotoSphereViewer
-        ref={photoSphereRef}
-        src="Test_pano.jpg"
-        littlePlanet={true}
-        lang={{
-          littlePlanetButton: "Little Planet",
-        }}
-        hideNavbarButton={true}
-        height={'100vh'}
-        width={"100%"}
-        onClick={handleClick}
-        onReady={handleReady}
-        plugins={plugins} />
-    </div>
+    <>
+      <button onClick={() => setPanoIndex(panoIndex === 0 ? 1 : 0)}>Change pano image</button>
+      <div className="App">
+        <ReactPhotoSphereViewer
+          ref={photoSphereRef}
+          src={PANOS[panoIndex]}
+          littlePlanet={true}
+          lang={{
+            littlePlanetButton: "Little Planet",
+          }}
+          hideNavbarButton={true}
+          height={'100vh'}
+          width={"100%"}
+          onClick={handleClick}
+          onReady={handleReady}
+          plugins={plugins} />
+      </div>
+    </>
   );
 }
 
