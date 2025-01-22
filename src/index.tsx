@@ -61,10 +61,10 @@ export interface CubeMapSrc {
 
 export interface TilesAdapterSrc {
     width: number;
-  cols: number;
-  rows: number;
-  baseUrl: string;
-  tileUrl: (col: number, row: number) => string;
+    cols: number;
+    rows: number;
+    baseUrl: string;
+    tileUrl: (col: number, row: number) => string;
 }
 
 /**
