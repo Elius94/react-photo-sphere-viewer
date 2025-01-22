@@ -508,6 +508,17 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
     }, [sphereElement, options])
 
     useEffect(() => {
+        return () => {
+            const viewer: Viewer = spherePlayerInstance.current
+            if (viewer && viewer.container && viewer.container.parentNode) {
+                (viewer.renderer as unknown as { renderer?: { dispose: () => void } })?.renderer?.dispose()
+                ;(viewer.renderer as unknown as { renderer?: { forceContextLoss: () => void } })?.renderer?.forceContextLoss()
+                viewer.destroy()
+            }
+        }
+    }, [spherePlayerInstance])
+
+    useEffect(() => {
         if (spherePlayerInstance.current && options.src) {
             spherePlayerInstance.current.setPanorama(options.src, {})
         }
