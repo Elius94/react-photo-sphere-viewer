@@ -50,6 +50,15 @@ const omittedProps = [
 ]
 type MakeOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
+export interface CubeMapSrc {
+    left: string;
+    front: string;
+    right: string;
+    back: string;
+    top: string;
+    bottom: string;
+}
+
 /**
  * Props interface for the Viewer component.
  * 
@@ -70,7 +79,7 @@ type MakeOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
  * @property {Function} [onReady] - Event handler for when the viewer is ready. Receives the Viewer instance.
  */
 export interface Props extends MakeOptional<ViewerConfig, "container"> {
-    src: string;
+    src: string | CubeMapSrc;
     navbar?: boolean | string | Array<string | NavbarCustomButton>;
     height: string;
     width?: string;

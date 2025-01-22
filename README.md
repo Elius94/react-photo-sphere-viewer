@@ -494,9 +494,18 @@ return (
 
 ### Note for Virtual Tour Plugin
 
-Please follow this Sandbox template to see how to use the original plugin: [Sandbox](https://codesandbox.io/s/react-photo-sphere-viewer-virtual-tour-example-xg8tp4)
+Please follow this Sandbox template to see how to use the original plugin: [Sandbox](https://codesandbox.io/p/sandbox/mj2p5k)
 
 Please remember to set the 'src' prop of the ReactPhotoSphereViewer component to a placeholder image, it colud be for example the first picture of the virtual tour. [#36](https://github.com/Elius94/react-photo-sphere-viewer/issues/36)
+If you want to use virtual tour functions, you can store them to a React state: [#69](https://github.com/Elius94/react-photo-sphere-viewer/issues/69#issuecomment-2606710741)
+
+```jsx
+const handleReady = useCallback((instance) => {
+    const animate = instance.animate.bind(instance); // Extract the "animate" function for example.
+    setAnimateFunction(() => animate); // Store function into state
+  }, []);
+```
+This quick tip can be used to call every library method.
 
 ### Adapters (NEW - 3.1.0-psv5.0.1)
 

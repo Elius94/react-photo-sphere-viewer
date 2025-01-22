@@ -114,10 +114,11 @@ function App() {
         <ReactPhotoSphereViewer
           ref={photoSphereRef}
           src={PANOS[panoIndex]}
-          littlePlanet={true}
-          lang={{
-            littlePlanetButton: "Little Planet",
-          }}
+          defaultZoomLvl={0}
+          // littlePlanet={true}
+          // lang={{
+          //   littlePlanetButton: "Little Planet",
+          // }}
           hideNavbarButton={true}
           height={'100vh'}
           width={"100%"}

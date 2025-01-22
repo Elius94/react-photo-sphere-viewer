@@ -4,6 +4,7 @@ import {
 import { VirtualTourPlugin } from "@photo-sphere-viewer/virtual-tour-plugin";
 import { MarkersPlugin } from "@photo-sphere-viewer/markers-plugin";
 import { GalleryPlugin } from "@photo-sphere-viewer/gallery-plugin";
+import "@photo-sphere-viewer/markers-plugin/index.css";
 import "@photo-sphere-viewer/virtual-tour-plugin/index.css";
 import "@photo-sphere-viewer/gallery-plugin/index.css";
 import React from "react";
@@ -13,6 +14,7 @@ const caption = "Cape Florida Light, Key Biscayne <b>&copy; Pixexid</b>";
 
 function App() {
   const pSRef = React.createRef();
+  const [getCurrentNodeFunction, setGetCurrentNodeFunction] = React.useState(null);
 
   const handleReady = (instance) => {
     const virtualTour = instance.getPlugin(VirtualTourPlugin);
@@ -104,7 +106,15 @@ function App() {
       ],
       "2"
     );
+
+    const getCurrentNode = virtualTour.getCurrentNode.bind(virtualTour);
+    setGetCurrentNodeFunction(() => getCurrentNode);
   };
+
+  const handleClick = () => {
+    const curr_node = getCurrentNodeFunction();
+    console.log(curr_node);
+  }
 
   const plugins = [
     MarkersPlugin,
@@ -140,6 +150,7 @@ function App() {
         container={"container-360"}
         src={baseUrl + "tour/key-biscayne-3.jpg"}
       ></ReactPhotoSphereViewer>
+      <button onClick={handleClick}>Get Current Node</button>
     </div>
   );
 }
