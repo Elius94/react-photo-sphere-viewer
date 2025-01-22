@@ -59,6 +59,14 @@ export interface CubeMapSrc {
     bottom: string;
 }
 
+export interface TilesAdapterSrc {
+    width: number;
+  cols: number;
+  rows: number;
+  baseUrl: string;
+  tileUrl: (col: number, row: number) => string;
+}
+
 /**
  * Props interface for the Viewer component.
  * 
@@ -79,7 +87,7 @@ export interface CubeMapSrc {
  * @property {Function} [onReady] - Event handler for when the viewer is ready. Receives the Viewer instance.
  */
 export interface Props extends MakeOptional<ViewerConfig, "container"> {
-    src: string | CubeMapSrc;
+    src: string | CubeMapSrc | TilesAdapterSrc;
     navbar?: boolean | string | Array<string | NavbarCustomButton>;
     height: string;
     width?: string;
