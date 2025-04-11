@@ -6,6 +6,9 @@ import { PlanPlugin } from '@photo-sphere-viewer/plan-plugin';
 import { TileLayer } from 'leaflet';
 import React from 'react';
 import "@photo-sphere-viewer/plan-plugin/index.css"
+import "@photo-sphere-viewer/markers-plugin/index.css"
+import 'leaflet/dist/leaflet.css';
+
 
 const PANOS = [
   "https://srv.eliusoutdoor.com/ws/api/immersive/images/?n=gran-sasso-1&t=p",
@@ -113,7 +116,15 @@ function App() {
       <div className="App">
         <ReactPhotoSphereViewer
           ref={photoSphereRef}
-          src={PANOS[panoIndex]}
+          panorama={PANOS[panoIndex]}
+          panoData={{
+            fullWidth: 6000,
+            fullHeight: 3000, // optional
+            croppedWidth: 4000, // optional
+            croppedHeight: 2000, // optional
+            croppedX: 1000,
+            croppedY: 500,
+          }}
           defaultZoomLvl={0}
           // littlePlanet={true}
           // lang={{
