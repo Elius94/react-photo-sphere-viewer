@@ -66,6 +66,12 @@ export interface TilesAdapterSrc {
     tileUrl: (col: number, row: number) => string;
 }
 
+type PluginEntry =
+    | PluginConstructor
+    | [PluginConstructor, Record<string, unknown>];
+
+export type PluginConfig = PluginEntry;
+
 /**
  * Props interface for the Viewer component.
  * 
@@ -95,7 +101,7 @@ export interface Props extends MakeOptional<ViewerConfig, "container"> {
     fishEye?: boolean | number;
     hideNavbarButton?: boolean;
     lang?: Record<string, string>;
-    plugins?: Array<PluginConstructor | [PluginConstructor, Record<string, unknown>]>;
+    plugins?: readonly PluginEntry[];
     // Events
     onPositionChange?(lat: number, lng: number, instance: Viewer): void;
     onZoomChange?(data: events.ZoomUpdatedEvent & { type: "zoom-updated"; }, instance: Viewer): void;
