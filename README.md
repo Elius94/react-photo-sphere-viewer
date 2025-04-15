@@ -278,7 +278,7 @@ type ViewerConfig = {
   panorama?: any;
   /** @default equirectangular */
   adapter?: AdapterConstructor | [AdapterConstructor, any];
-  plugins?: Array<PluginConstructor | [PluginConstructor, any]>;
+  plugins?: PluginConfig[];
   /** @default null */
   caption?: string;
   /** @default null */
@@ -346,6 +346,8 @@ type ViewerConfig = {
 To use the standard plugins provided by the original library, you need to pass the `plugins` prop to the component. The prop is an array of plugins. Each plugin can be a constructor or an array of constructor and options. To include them in the component, you need to import them directly from the "@photo-sphere-viewer/" package.
 
 > The only "third-party" plugin that is supported at the moment is the "Lensflare" plugin. To use it, you need to import it from the "photo-sphere-viewer-lensflare-plugin" package. This plugin is made by me and it is not included in the original library.
+
+> For Typescript users: the plugin array type is `PluginConfig[]` and you can import it from the library.
 
 ```jsx
 import { ReactPhotoSphereViewer } from "react-photo-sphere-viewer";
