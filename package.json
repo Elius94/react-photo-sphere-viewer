@@ -1,68 +1,78 @@
 {
-    "name": "react-photo-sphere-viewer",
-    "version": "6.0.1",
-    "description": "Photosphere Viewer for React.JS, wrapper of photo-sphere-viewer.js",
-    "author": "Elius94",
-    "license": "MIT",
-    "keywords": [
-        "react",
-        "photosphere",
-        "viewer",
-        "360",
-        "panorama",
-        "photo",
-        "sphere",
-        "photo-sphere-viewer",
-        "react-photo-sphere-viewer"
-    ],
-    "repository": "elius94/react-photo-sphere-viewer",
-    "main": "dist/index.js",
-    "module": "dist/index.js",
-    "jsnext:main": "dist/index.js",
-    "types": "dist/index.d.ts",
-    "type": "module",
-    "engines": {
-        "node": ">=8",
-        "npm": ">=5"
-    },
-    "scripts": {
-        "clean": "rimraf dist/",
-        "copy-files": "copyfiles -u 1 src/**/*.css dist/",
-        "build": "npm run clean && rollup -c && npm run copy-files",
-        "start": "rollup -c -w",
-        "prepare": "npm run build",
-        "predeploy": "cd example && npm install && npm run build",
-        "deploy": "gh-pages -d example/build"
-    },
-    "dependencies": {
-        "autoprefixer": "^10.4.17",
-        "eventemitter3": "^5.0.1"
-    },
-    "peerDependencies": {
-        "@photo-sphere-viewer/core": ">=5.7.1",
-        "prop-types": "^15.5.4",
-        "react": ">=16.0.0",
-        "react-dom": ">=16.0.0"
-    },
-    "devDependencies": {
-        "@rollup/plugin-babel": "^6.0.4",
-        "@rollup/plugin-commonjs": "^25.0.7",
-        "@rollup/plugin-node-resolve": "^15.2.3",
-        "@rollup/plugin-typescript": "^11.1.6",
-        "@rollup/plugin-url": "^8.0.2",
-        "@svgr/rollup": "^8.1.0",
-        "@types/react": "^18.2.60",
-        "@typescript-eslint/eslint-plugin": "^7.1.0",
-        "@typescript-eslint/parser": "^7.1.0",
-        "babel-plugin-styled-components": "^2.1.4",
-        "copyfiles": "^2.4.1",
-        "gh-pages": "^6.1.1",
-        "rimraf": "^5.0.5",
-        "rollup": "^4.12.0",
-        "rollup-plugin-peer-deps-external": "^2.2.4",
-        "rollup-plugin-postcss": "^4.0.2"
-    },
-    "files": [
-        "dist"
-    ]
+  "name": "react-photo-sphere-viewer",
+  "version": "6.2.0",
+  "description": "A React wrapper for Photo Sphere Viewer, to display 360° panoramas with ease.",
+  "author": "Elius94",
+  "license": "MIT",
+  "keywords": [
+    "react",
+    "photosphere",
+    "viewer",
+    "360",
+    "panorama",
+    "photo",
+    "sphere",
+    "photo-sphere-viewer",
+    "react-photo-sphere-viewer"
+  ],
+  "sideEffects": false,
+  "homepage": "https://github.com/elius94/react-photo-sphere-viewer#readme",
+  "bugs": {
+    "url": "https://github.com/elius94/react-photo-sphere-viewer/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elius94/react-photo-sphere-viewer.git"
+  },
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "engines": {
+    "node": ">=16",
+    "npm": ">=8"
+  },
+  "scripts": {
+    "clean": "rimraf dist/",
+    "clean-peers": "rimraf node_modules/@photo-sphere-viewer && rimraf node_modules/react && rimraf node_modules/react-dom",
+    "copy-files": "copyfiles -u 1 src/**/*.css dist/",
+    "types": "tsc --emitDeclarationOnly",
+    "build": "npm run clean && rollup -c && npm run types && npm run copy-files",
+    "start": "rollup -c -w",
+    "prepare": "npm run build && npm run clean-peers",
+    "predeploy": "cd example && npm install && npm run build",
+    "deploy": "gh-pages -d example/build"
+  },
+  "dependencies": {
+    "eventemitter3": "^5.0.1",
+    "leaflet": "^1.9.4"
+  },
+  "peerDependencies": {
+    "@photo-sphere-viewer/core": ">=5.13.1",
+    "prop-types": "^15.5.4",
+    "react": ">=16.0.0",
+    "react-dom": ">=16.0.0"
+  },
+  "devDependencies": {
+    "@babel/preset-typescript": "^7.27.0",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@rollup/plugin-url": "^8.0.2",
+    "@svgr/rollup": "^8.1.0",
+    "@types/react": "^18.2.60",
+    "@types/three": "^0.175.0",
+    "@typescript-eslint/eslint-plugin": "^7.1.0",
+    "@typescript-eslint/parser": "^7.1.0",
+    "babel-plugin-styled-components": "^2.1.4",
+    "copyfiles": "^2.4.1",
+    "gh-pages": "^6.1.1",
+    "rimraf": "^5.0.5",
+    "rollup": "^4.12.0",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-postcss": "^4.0.2"
+  },
+  "files": [
+    "dist"
+  ]
 }

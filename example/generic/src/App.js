@@ -1,8 +1,8 @@
 import './App.css';
-import { MarkersPlugin } from '@photo-sphere-viewer/markers-plugin';
 import { ReactPhotoSphereViewer } from 'react-photo-sphere-viewer';
-import { LensflarePlugin } from 'photo-sphere-viewer-lensflare-plugin';
+import { MarkersPlugin } from '@photo-sphere-viewer/markers-plugin';
 import { PlanPlugin } from '@photo-sphere-viewer/plan-plugin';
+import { LensflarePlugin } from 'photo-sphere-viewer-lensflare-plugin';
 import { TileLayer } from 'leaflet';
 import React from 'react';
 import "@photo-sphere-viewer/plan-plugin/index.css"
@@ -13,6 +13,77 @@ import 'leaflet/dist/leaflet.css';
 const PANOS = [
   "https://srv.eliusoutdoor.com/ws/api/immersive/images/?n=gran-sasso-1&t=p",
   "https://srv.eliusoutdoor.com/ws/api/immersive/images/?n=mondeval&t=p"
+];
+
+const plugins = [
+  [
+    LensflarePlugin,
+    {
+      // list of lensflares
+      lensflares: [
+        {
+          id: 'sun',
+          position: { yaw: '145deg', pitch: '2deg' },
+          type: 0,
+        }
+      ]
+    }
+  ],
+  [
+    PlanPlugin, {
+      defaultZoom: 14,
+      coordinates: [6.78677, 44.58241],
+      bearing: '120deg',
+      layers: [
+        {
+          name: 'OpenStreetMap',
+          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+          attribution: '&copy; OpenStreetMap',
+        },
+        {
+          name: 'OpenTopoMap',
+          layer: new TileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            subdomains: ['a', 'b', 'c'],
+            maxZoom: 17,
+          }),
+          attribution: '&copy; OpenTopoMap',
+        },
+      ],
+      hotspots: [
+        {
+          coordinates: [6.7783, 44.58506],
+          id: 'green-lake',
+          tooltip: 'Lac vert',
+          color: 'green',
+        },
+      ],
+    }
+  ],
+  [
+    MarkersPlugin,
+    {
+      // list of markers
+      markers: [
+        {
+          // image marker that opens the panel when clicked
+          id: "image",
+          position: { yaw: '0.33deg', pitch: '0.1deg' },
+          image: "pin-blue.png",
+          anchor: "bottom center",
+          size: { width: 32, height: 32 },
+          tooltip: "Mountain peak. <b>Click me!</b>"
+        },
+        {
+          // image marker rendered in the 3D scene
+          id: "imageLayer",
+          image: "drone.png",
+          size: { width: 220, height: 220 },
+          position: { yaw: '13.5deg', pitch: '-0.1deg' },
+          tooltip: "Image embedded in the scene"
+        }
+      ]
+    }
+  ],
 ];
 
 function App() {
@@ -38,93 +109,18 @@ function App() {
     });
   }
 
-  const plugins = [
-    [
-      PlanPlugin, {
-        defaultZoom: 14,
-        coordinates: [6.78677, 44.58241],
-        bearing: '120deg',
-        layers: [
-          {
-            name: 'OpenStreetMap',
-            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-            attribution: '&copy; OpenStreetMap',
-          },
-          {
-            name: 'OpenTopoMap',
-            layer: new TileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-              subdomains: ['a', 'b', 'c'],
-              maxZoom: 17,
-            }),
-            attribution: '&copy; OpenTopoMap',
-          },
-        ],
-        hotspots: [
-          {
-            coordinates: [6.7783, 44.58506],
-            id: 'green-lake',
-            tooltip: 'Lac vert',
-            color: 'green',
-          },
-        ],
-      }
-    ],
-    [
-      MarkersPlugin,
-      {
-        // list of markers
-        markers: [
-          {
-            // image marker that opens the panel when clicked
-            id: "image",
-            position: { yaw: '0.33deg', pitch: '0.1deg' },
-            image: "pin-blue.png",
-            anchor: "bottom center",
-            size: { width: 32, height: 32 },
-            tooltip: "Mountain peak. <b>Click me!</b>"
-          },
-          {
-            // image marker rendered in the 3D scene
-            id: "imageLayer",
-            image: "drone.png",
-            size: { width: 220, height: 220 },
-            position: { yaw: '13.5deg', pitch: '-0.1deg' },
-            tooltip: "Image embedded in the scene"
-          }
-        ]
-      }
-    ],
-    [
-      LensflarePlugin,
-      {
-        // list of lensflares
-        lensflares: [
-          {
-            id: 'sun',
-            position: { yaw: '145deg', pitch: '2deg' },
-            type: 0,
-          }
-        ]
-      }
-    ],
-
-  ];
-
   return (
     <>
-      <button onClick={() => setPanoIndex(panoIndex === 0 ? 1 : 0)}>Change pano image</button>
       <div className="App">
+        <button
+          style={{ position: "absolute", top: 10, left: 10, zIndex: 9999 }}
+          onClick={() => setPanoIndex(panoIndex === 0 ? 1 : 0)}
+        >
+          Change pano image
+        </button>
         <ReactPhotoSphereViewer
           ref={photoSphereRef}
           panorama={PANOS[panoIndex]}
-          panoData={{
-            fullWidth: 6000,
-            fullHeight: 3000, // optional
-            croppedWidth: 4000, // optional
-            croppedHeight: 2000, // optional
-            croppedX: 1000,
-            croppedY: 500,
-          }}
           defaultZoomLvl={0}
           // littlePlanet={true}
           // lang={{
