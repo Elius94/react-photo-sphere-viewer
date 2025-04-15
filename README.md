@@ -276,10 +276,6 @@ Currently all options of the original library are supported and exported as prop
 type ViewerConfig = {
   container: HTMLElement | string;
   panorama?: any;
-  /** @deprecated Use the `overlay` plugin instead */
-  overlay?: any;
-  /** @deprecated Use the `overlay` plugin instead */
-  overlayOpacity?: number;
   /** @default equirectangular */
   adapter?: AdapterConstructor | [AdapterConstructor, any];
   plugins?: Array<PluginConstructor | [PluginConstructor, any]>;
@@ -315,8 +311,8 @@ type ViewerConfig = {
   moveSpeed?: number;
   /** @default 1 */
   zoomSpeed?: number;
-  /** @default true */
-  moveInertia?: boolean;
+  /** @default 0.8 */
+  moveInertia?: boolean | number;
   /** @default true */
   mousewheel?: boolean;
   /** @default true */
@@ -325,45 +321,21 @@ type ViewerConfig = {
   mousewheelCtrlKey?: boolean;
   /** @default false */
   touchmoveTwoFingers?: boolean;
-  /** @deprecated configure `useXmpData` on EquirectangularAdapter */
-  useXmpData?: boolean;
   panoData?: PanoData | PanoDataProvider;
-  requestHeaders?:
-    | Record<string, string>
-    | ((url: string) => Record<string, string>);
-  /** @deprecated configure `backgroundColor` on EquirectangularAdapter */
+  requestHeaders?: Record<string, string> | ((url: string) => Record<string, string>);
+  /** @default '#000' */
   canvasBackground?: string;
+  /** @default '{ speed: 1500, rotation: true, effect: "fade" }' */
+  defaultTransition?: TransitionOptions;
   /** @default '{ alpha: true, antialias: true }' */
   rendererParameters?: WebGLRendererParameters;
   /** @default false */
   withCredentials?: boolean;
   /** @default 'zoom move download description caption fullscreen' */
   navbar?: boolean | string | Array<string | NavbarCustomButton>;
-  lang?: {
-    zoom: string;
-    zoomOut: string;
-    zoomIn: string;
-    moveUp: string;
-    moveDown: string;
-    moveLeft: string;
-    moveRight: string;
-    download: string;
-    fullscreen: string;
-    menu: string;
-    close: string;
-    twoFingers: string;
-    ctrlZoom: string;
-    loadError: string;
-    littlePlanetButton: string;
-    littlePlanetIcon: string;
-    [K: string]: string;
-  };
-  keyboard?:
-    | boolean
-    | "always"
-    | "fullscreen"
-    | Record<string, ACTIONS | ((viewer: Viewer) => void)>;
-  keyboardActions?: Record<string, ACTIONS | ((viewer: Viewer) => void)>;
+  lang?: Record<string, string>;
+  keyboard?: boolean | 'always' | 'fullscreen';
+  keyboardActions?: Record<string, ACTIONS | ((viewer: Viewer, e: KeyboardEvent) => void)>;
 };
 ```
 
