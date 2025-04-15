@@ -101,7 +101,7 @@ export interface Props extends MakeOptional<ViewerConfig, "container"> {
     fishEye?: boolean | number;
     hideNavbarButton?: boolean;
     lang?: Record<string, string>;
-    plugins?: readonly PluginEntry[];
+    plugins?: PluginEntry[];
     // Events
     onPositionChange?(lat: number, lng: number, instance: Viewer): void;
     onZoomChange?(data: events.ZoomUpdatedEvent & { type: "zoom-updated"; }, instance: Viewer): void;
