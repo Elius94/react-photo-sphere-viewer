@@ -1,6 +1,6 @@
 {
   "name": "react-photo-sphere-viewer",
-  "version": "6.2.2",
+  "version": "6.2.3",
   "description": "A React wrapper for Photo Sphere Viewer, to display 360° panoramas with ease.",
   "author": "Elius94",
   "license": "MIT",
@@ -43,8 +43,7 @@
     "deploy": "gh-pages -d example/build"
   },
   "dependencies": {
-    "eventemitter3": "^5.0.1",
-    "leaflet": "^1.9.4"
+    "eventemitter3": "^5.0.1"
   },
   "peerDependencies": {
     "@photo-sphere-viewer/core": ">=5.13.1",
