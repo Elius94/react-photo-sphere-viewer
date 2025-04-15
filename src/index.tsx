@@ -2,7 +2,6 @@ import React, { useState, useEffect, useImperativeHandle, forwardRef, useRef, us
 import {
     Viewer,
     ViewerConfig,
-    PanoData,
     AnimateOptions,
     CssSize,
     ExtendedPosition,
@@ -15,22 +14,22 @@ import {
     Position,
     Size,
     PanoramaOptions,
-    utils
+    utils,
+    AbstractPlugin
     /* @ts-ignore next line */
 } from "@photo-sphere-viewer/core" // Peer dependency
 import "./styles.css"
 import "@photo-sphere-viewer/core/index.css"
-// import { LensflarePlugin } from "photo-sphere-viewer-lensflare-plugin"
 
 import EventEmitter from "eventemitter3"
 
 
 const eventEmitter = new EventEmitter()
 const Emitter = {
-    on: (event, fn) => eventEmitter.on(event, fn),
-    once: (event, fn) => eventEmitter.once(event, fn),
-    off: (event, fn) => eventEmitter.off(event, fn),
-    emit: (event, payload) => eventEmitter.emit(event, payload)
+    on: (event: string, fn: (...args: unknown[]) => void) => eventEmitter.on(event, fn),
+    once: (event: string, fn: (...args: unknown[]) => void) => eventEmitter.once(event, fn),
+    off: (event: string, fn: (...args: unknown[]) => void) => eventEmitter.off(event, fn),
+    emit: (event: string, payload: unknown) => eventEmitter.emit(event, payload),
 }
 
 Object.freeze(Emitter)
@@ -95,25 +94,8 @@ export interface Props extends MakeOptional<ViewerConfig, "container"> {
     littlePlanet?: boolean;
     fishEye?: boolean | number;
     hideNavbarButton?: boolean;
-    lang?: {
-        zoom: string;
-        zoomOut: string;
-        zoomIn: string;
-        moveUp: string;
-        moveDown: string;
-        moveLeft: string;
-        moveRight: string;
-        download: string;
-        fullscreen: string;
-        menu: string;
-        close: string;
-        twoFingers: string;
-        ctrlZoom: string;
-        loadError: string;
-        littlePlanetButton: string;
-        littlePlanetIcon: string;
-        [K: string]: string;
-    };
+    lang?: Record<string, string>;
+    plugins?: Array<PluginConstructor | [PluginConstructor, Record<string, unknown>]>;
     // Events
     onPositionChange?(lat: number, lng: number, instance: Viewer): void;
     onZoomChange?(data: events.ZoomUpdatedEvent & { type: "zoom-updated"; }, instance: Viewer): void;
@@ -131,7 +113,7 @@ function adaptOptions(options: Props): ViewerConfig {
     const adaptedOptions = { ...options }
     for (const key in adaptedOptions) {
         if (omittedProps.includes(key)) {
-            delete adaptedOptions[key]
+            delete (adaptedOptions as Record<string, unknown>)[key]
         }
     }
     return adaptedOptions as ViewerConfig
@@ -213,7 +195,7 @@ export interface ViewerAPI {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     stopAnimation(): PromiseLike<any>;
     rotate(position: ExtendedPosition): void;
-    setOption(option: keyof UpdatableViewerConfig, value: unknown): void;
+    setOption<T extends keyof UpdatableViewerConfig>(option: T, value: UpdatableViewerConfig[T]): void;
     setOptions(options: Partial<UpdatableViewerConfig>): void;
     getCurrentNavbar(): (string | object)[] | void;
     zoom(value: number): void;
@@ -224,7 +206,18 @@ export interface ViewerAPI {
     exitFullscreen(): void;
     toggleFullscreen(): void;
     isFullscreenEnabled(): boolean | void;
-    getPlugin<T>(pluginId: string | PluginConstructor): T;
+    /**
+     * Returns the instance of a plugin if it exists
+     * @example By plugin identifier
+     * ```js
+     * viewer.getPlugin('markers')
+     * ```
+     * @example By plugin class with TypeScript support
+     * ```ts
+     * viewer.getPlugin<MarkersPlugin>(MarkersPlugin)
+     * ```
+     */
+    getPlugin<T extends AbstractPlugin<never>>(pluginId: string | PluginConstructor): T;
     getPosition(): Position; // Specify the return type
     getZoomLevel(): number; // Specify the return type
     getSize(): Size; // Specify the return type
@@ -244,7 +237,10 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
         () => props,
         [
             // recreate options when individual props change
+            props.panorama,
             props.src,
+            props.size,
+            props.canvasBackground,
             props.navbar,
             props.height,
             props.width,
@@ -269,6 +265,7 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
             props.requestHeaders,
             props.withCredentials,
             props.keyboard,
+            props.keyboardActions,
             props.plugins,
             props.adapter,
             props.sphereCorrection,
@@ -284,14 +281,18 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
             props.loadingImg,
             props.loadingTxt,
             props.rendererParameters,
+            props.defaultTransition,
         ]
     )
+
+
     const spherePlayerInstance = useRef<Viewer | null>(null)
     let LITTLEPLANET_MAX_ZOOM = 130
     const [LITTLEPLANET_DEF_LAT] = useState(-90)
     const [LITTLEPLANET_FISHEYE] = useState(2)
     const [LITTLEPLANET_DEF_ZOOM] = useState(0)
     const [currentNavbar, setCurrentNavbar] = useState<(string | object)[]>(defaultNavbar)
+    const littlePlanetEnabledRef = useRef(true)
 
     useEffect(() => {
         function handleResize() {
@@ -307,12 +308,11 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
     }, [])
 
     useEffect(() => {
-        let littlePlanetEnabled = true
         if (sphereElement && !spherePlayerInstance.current) {
             const _c = new Viewer({
                 ...adaptOptions(options),
                 container: sphereElement,
-                panorama: options.src,
+                panorama: options.panorama || options.src,
                 size: {
                     height: options.height,
                     width: options.width || "100px"
@@ -333,15 +333,13 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
                 mousemove: options.mousemove ?? true,
                 mousewheelCtrlKey: options.mousewheelCtrlKey || false,
                 touchmoveTwoFingers: options.touchmoveTwoFingers || false,
-                panoData: options.panoData || {} as PanoData,
-                requestHeaders: options.requestHeaders || {},
+                panoData: options.panoData || undefined,
+                requestHeaders: options.requestHeaders || undefined,
                 withCredentials: options.withCredentials || false,
                 navbar: filterNavbar(options.navbar),
                 lang: options.lang || {} as keyof Props["lang"],
                 keyboard: options.keyboard || "fullscreen",
-                plugins: [
-                    ...(options.plugins ? options.plugins as PluginConstructor[] : [])
-                ],
+                plugins: options.plugins ?? [],
             })
             _c.addEventListener("ready", () => {
                 if (options.onReady) {
@@ -352,8 +350,8 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
                 if (options.onClick) {
                     options.onClick(data, _c)
                 }
-                if (options.littlePlanet && littlePlanetEnabled) {
-                    littlePlanetEnabled = false
+                if (options.littlePlanet && littlePlanetEnabledRef.current) {
+                    littlePlanetEnabledRef.current = false
                     // fly inside the sphere
                     _c.animate({
                         yaw: 0,
@@ -402,7 +400,7 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
                     title: props.lang?.littlePlanetButton || "Reset Little Planet",
                     className: "resetLittlePlanetButton",
                     onClick: () => {
-                        littlePlanetEnabled = true
+                        littlePlanetEnabledRef.current = true
                         _c.setOption("maxFov", LITTLEPLANET_MAX_ZOOM)
                         //_c.setOption("fisheye", LITTLEPLANET_FISHEYE) // @ts-ignore ts(2345)
                         _c.setOption("mousewheel", false)
@@ -476,6 +474,7 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
                 _c.navbar.hide()
             }
 
+            /* @ts-ignore next line */
             Emitter.on("animate", (options: AnimateOptions) => {
                 _c.animate(options)
             }).on("stop-animation", () => {
@@ -487,12 +486,22 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
             }).on("setOption", (pair: { option: keyof UpdatableViewerConfig, value: UpdatableViewerConfig[keyof UpdatableViewerConfig] }) => {
                 const { option, value } = pair
                 _c.setOption(option, value)
+            }).on("setOptions", (options: Partial<UpdatableViewerConfig>) => {
+                _c.setOptions(options)
             }).on("zoom", (zoom: number) => {
                 _c.zoom(zoom)
             }).on("zoomIn", (step: number) => {
                 _c.zoomIn(step)
             }).on("zoomOut", (step: number) => {
                 _c.zoomOut(step)
+            }).on("resize", (size: CssSize) => {
+                _c.resize(size)
+            }).on("enterFullscreen", () => {
+                _c.enterFullscreen()
+            }).on("exitFullscreen", () => {
+                _c.exitFullscreen()
+            }).on("toggleFullscreen", () => {
+                _c.toggleFullscreen()
             }).on("needsContinuousUpdate", (enabled: boolean) => {
                 _c.needsContinuousUpdate(enabled)
             }).on("observeObjects", (userDataKey: string) => {
@@ -501,6 +510,16 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
                 _c.unobserveObjects(userDataKey)
             }).on("setCursor", (cursor: string) => {
                 _c.setCursor(cursor)
+            }).on("setPanorama", (payload: { path: unknown, options?: PanoramaOptions }) => {
+                _c.setPanorama(payload.path, payload.options)
+            }).on("showError", (message: string) => {
+                _c.showError(message)
+            }).on("hideError", () => {
+                _c.hideError()
+            }).on("startKeyboardControl", () => {
+                _c.startKeyboardControl()
+            }).on("stopKeyboardControl", () => {
+                _c.stopKeyboardControl()
             })
 
             spherePlayerInstance.current = _c
@@ -508,21 +527,22 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
     }, [sphereElement, options])
 
     useEffect(() => {
-        return () => {
-            const viewer: Viewer = spherePlayerInstance.current
+        const viewer: Viewer | null = spherePlayerInstance.current
+        if (viewer && viewer.container && viewer.container.parentNode) {
             if (viewer && viewer.container && viewer.container.parentNode) {
                 (viewer.renderer as unknown as { renderer?: { dispose: () => void } })?.renderer?.dispose()
-                ;(viewer.renderer as unknown as { renderer?: { forceContextLoss: () => void } })?.renderer?.forceContextLoss()
+                ; (viewer.renderer as unknown as { renderer?: { forceContextLoss: () => void } })?.renderer?.forceContextLoss()
                 viewer.destroy()
             }
         }
     }, [spherePlayerInstance])
 
     useEffect(() => {
-        if (spherePlayerInstance.current && options.src) {
-            spherePlayerInstance.current.setPanorama(options.src, {})
+        const panorama = options.panorama ?? options.src
+        if (spherePlayerInstance.current && panorama) {
+            spherePlayerInstance.current.setPanorama(panorama, {})
         }
-    }, [options.src])
+    }, [options.src, options.panorama])
 
     const _imperativeHandle = () => ({
         animate(options: AnimateOptions) {
@@ -552,7 +572,7 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
         rotate(position: ExtendedPosition) {
             Emitter.emit("rotate", position)
         },
-        setOption(option: keyof UpdatableViewerConfig, value: unknown): void {
+        setOption<T extends keyof UpdatableViewerConfig>(option: T, value: UpdatableViewerConfig[T]) {
             Emitter.emit("setOption", { option, value })
         },
         setOptions(options: Partial<UpdatableViewerConfig>): void {
@@ -585,7 +605,7 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
         isFullscreenEnabled() {
             return spherePlayerInstance.current?.isFullscreenEnabled()
         },
-        getPlugin<T>(pluginId: string | PluginConstructor): T {
+        getPlugin<T extends AbstractPlugin<never>>(pluginId: string | PluginConstructor): T {
             return spherePlayerInstance.current?.getPlugin(pluginId) as T
         },
         getPosition(): Position {
@@ -630,6 +650,8 @@ const ReactPhotoSphereViewer = forwardRef<ViewerAPI, Props>((props, ref): React.
 
     return <div className={options.containerClass || "view-container"} ref={setRef} />
 })
+
+ReactPhotoSphereViewer.displayName = "ReactPhotoSphereViewer"
 
 export {
     ReactPhotoSphereViewer

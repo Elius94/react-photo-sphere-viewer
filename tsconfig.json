@@ -1,36 +1,43 @@
 {
   "compilerOptions": {
-    "module": "esnext",
-    "target": "es5",
-    "lib": [
-      "es6",
-      "dom",
-      "es2017"
-    ],
-    "sourceMap": true,
-    "allowJs": false,
-    "jsx": "react",
+    // Output moderno e compatibile con i bundler
+    "target": "ESNext",
+    "module": "ESNext",
+
+    // Librerie supportate
+    "lib": ["DOM", "ESNext"],
+
+    // JSX React moderno
+    "jsx": "react-jsx",
+
+    // Risoluzione moduli standard
     "moduleResolution": "Node",
-    "forceConsistentCasingInFileNames": true,
+    "baseUrl": "src",
+    "rootDir": "src",
+
+    // ⚙️ Output dei tipi
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "declarationDir": "./dist",
+
+    // Output JS non serve, ma è richiesto
+    "noEmit": false,
+    "outDir": "./dist", // richiesto anche se non usato
+
+    // ⚠️ Sicurezza e pulizia
+    "sourceMap": true,
+    "strict": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
-    "noImplicitAny": false,
     "strictNullChecks": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "allowSyntheticDefaultImports": true,
+
+    // Interoperabilità
     "esModuleInterop": true,
-    "baseUrl": "src/",
-    "rootDir": "src",
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules",
-    "build",
-    "dist",
-    "example",
-    "rollup.config.js"
-  ]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "example", "build", "rollup.config.js"]
 }
