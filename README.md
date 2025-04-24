@@ -118,6 +118,8 @@ export default function Home() {
 
 <br />
 
+[Next DevBox Template](https://codesandbox.io/p/devbox/k6j6mk)
+
 > [!IMPORTANT]
 > To use `<ReactPhotoSphereViewer />` in Next.js with [Page Router](https://nextjs.org/docs/pages), you'll need to use some work-arounds in order to import correctly the CSS modules. Otherwise you will encounter the `CSS Modules cannot be imported from within node_modules` error. See more [here](https://nextjs.org/docs/messages/css-npm).
 
